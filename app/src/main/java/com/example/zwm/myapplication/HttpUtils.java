@@ -64,6 +64,13 @@ public class HttpUtils {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Charset", "UTF-8");
 
+            // 设置请求的超时时间
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
+//            // 设置请求的头
+//            conn.setRequestProperty("User-Agent",
+//                "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
+
             conn.setDoOutput(true);
             conn.setDoInput(true);
 
