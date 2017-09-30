@@ -1,19 +1,22 @@
-package com.example.zwm.myapplication;
+package com.example.zwm.myapplication.activity;
 
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.zwm.myapplication.util.HttpUtils;
+import com.example.zwm.myapplication.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,54 +60,55 @@ public class MainActivity extends AppCompatActivity {
 //                linearLayoutOfCD.setBackground(null);
 
                 try {
-                    postText = "sents=" + inputText.getText();
+                    postText = "sents=" + inputText.getText().toString();
                     new Thread(){
                         @Override
                         public void run() {
+                            // 将输入文本发送至服务器，取得分析结果
                             resultFromPU = HttpUtils.post(PUSERVLET_URL_PATH, postText);
+                            // 将输入文本发送至服务器，取得分析结果
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // 显示服务器返回的分类结果信息
+                                    // for test 显示服务器返回的分类结果信息
                                     testHttp.setText(resultFromPU);
+                                    // for test 显示服务器返回的分类结果信息
 
                                     if (!resultFromPU.equals("") && resultFromPU != null) {
                                         String[] partArr = resultFromPU.split("\\|");
+
                                         // 有负面信息
                                         if (partArr.length > 1) {
                                             if (!partArr[1].equals("")) {
-                                                Drawable pos_neg_distribution_border = getResources().getDrawable(R.drawable.pos_neg_distribution_border);
-//                                                linearLayoutOfCD.setBackground(pos_neg_distribution_border);
+//                                                Drawable pos_distribution_border = getResources().getDrawable(R.drawable.pos_distribution_border);
+//                                                linearLayoutOfCD.setBackground(pos_distribution_border);
                                                 String[] positionArr = partArr[1].split(" ");
 
-                                                // 将文本输入框中的文本分句，结合分类结果信息逐一处理
-                                                String[] sentArr = postText.split("[。！？]");
+                                                HashMap<Integer, TextView> textViewMapOfSents = new HashMap<Integer, TextView>();
+                                                textViewMapOfSents.clear();
+
+                                                // 将文本输入框中的文本分句,逐句处理。先按负例处理，跳过空句子，后由分析结果信息重新处理正例句子
+                                                String[] sentArr = inputText.getText().toString().split("[。！？]");
                                                 for (int i = 0; i < sentArr.length; i++) {
-                                                    String text = sentArr[i];
-                                                    if (!text.equals("")) {
+                                                    if (!sentArr[i].equals("")) {
                                                         TextView tv = new TextView(MainActivity.this);
 //                                                        tv.setId(); // 怎么弄id？？？
                                                         tv.setWidth(linearLayoutOfCD.getWidth());
-                                                        tv.setText(text);
+                                                        tv.setText(sentArr[i]);
                                                         tv.setTextColor(Color.parseColor("#000000"));
                                                         tv.setTextSize(16f);
-                                                        tv.setBackground(pos_neg_distribution_border);
-                                                        linearLayoutOfCD.addView(tv);
+                                                        tv.setBackgroundResource(R.drawable.neg_distribution_border);
+                                                        textViewMapOfSents.put(i, tv);
                                                     }
                                                 }
 
-
-
+                                                // 为所有的正例句子添加底色
                                                 for (int i = 0; i < positionArr.length; i++) {
                                                     String text = sentArr[ Integer.parseInt(positionArr[i]) ];
                                                     if (!text.equals("")) {
-                                                        TextView tv = new TextView(MainActivity.this);
-                                                        tv.setWidth(linearLayoutOfCD.getWidth());
-                                                        tv.setText(text);
-                                                        tv.setTextColor(Color.parseColor("#000000"));
-                                                        tv.setTextSize(16f);
-                                                        tv.setBackground(pos_neg_distribution_border);
-                                                        linearLayoutOfCD.addView(tv);
+                                                        TextView tv = textViewMapOfSents.get( Integer.parseInt(positionArr[i]) );
+                                                        tv.setBackgroundResource(R.drawable.pos_distribution_border);
 
 //                                                        // 没到处理最后一个句子之前，都需要画一条分割线
 //                                                        if (i < positionArr.length - 1) {
@@ -116,6 +120,12 @@ public class MainActivity extends AppCompatActivity {
 //                                                        }
                                                     }
 
+                                                }
+                                                Set<Integer> keySet = textViewMapOfSents.keySet();
+                                                ArrayList<Integer> keyList = new ArrayList<Integer>(keySet);
+                                                Collections.sort(keyList);
+                                                for (int position : keyList) {
+                                                    linearLayoutOfCD.addView(textViewMapOfSents.get(position));
                                                 }
                                             }
                                         }
