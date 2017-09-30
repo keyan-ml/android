@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="#ee9"
     tools:context="com.example.zwm.myapplication.activity.MainActivity">
 
     <TextView
@@ -25,7 +25,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_of_total_body"
-        android:scrollbars="none" >
+        android:scrollbars="none"
+        android:scrollbarAlwaysDrawVerticalTrack="false" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,161 +41,36 @@
                 android:id="@+id/title_of_input_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:text="文本域"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/m_input_text"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:layout_marginTop="10dp"
                 android:padding="5dp"
                 android:background="@drawable/m_input_text_border"
                 android:gravity="top"
                 android:text="宝马的油耗太高了。红色的很嗲，白色敞篷的也喜欢的~。奇瑞汽车下线了这是结果，而不是奇瑞委屈的到处说自己一腔热血工业报国无门。奥迪的吉普中看不中用~苦逼的赶路孩子只能窝在最后座的小小空间里~。新览胜的灯更是无力吐槽。分享图片三选一，我最喜欢这台红色的雪佛兰，外观大气，空间大，中控台超有fell，我不喜欢丰田卡罗拉，老爸你要相信我的眼光，雪佛兰科鲁慈保值率高啊。比亚迪回复玻璃本性，没有默德萨克是最大败笔。个人比较讨厌开别克的，因为经常发现别克大白天的开着车灯甚至远光，每次被晃发现又是个别克，心中一万只羊驼奔腾，最近在上海各种原因各种机会开了各种别克，才发现原来几乎都是特么自动开灯的，别克的设计师大概都是偏远山区出来的吧，默认不是自动会死啊。速腾内饰也不好看。。比亚迪核心业务前景遭质疑-华尔街日报姐早就说了，千万不要买他们家的车子.。byd的策略根本就是有问题，为了圈钱，不是为了造车……"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/commit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+
                 android:text="提交"/>
             <!--文本域-->
 
-            <!--分类标注-->
             <TextView
-                android:id="@+id/title_of_classification_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="分类标注"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
-
-            <LinearLayout
-                android:id="@+id/container_of_cd"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/classification_display"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <!--分类标注-->
-
-            <!--正负例分布-->
-            <TextView
-                android:id="@+id/title_of_pos_neg_distribution"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="正负例分布"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
-
-            <TextView
-                android:id="@+id/pos_neg_distribution"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:textSize="16sp" />
-            <!--正负例分布-->
-
-            <!--细粒度-->
-            <TextView
-                android:id="@+id/title_of_transe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="细粒度"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
-
-            <TextView
-                android:id="@+id/transe"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:textSize="16sp" />
-            <!--细粒度-->
-
-
-
-
-
-
-
-            <TextView
-                android:id="@+id/test_http"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="等待http响应..."
-                android:background="@drawable/m_input_text_border" />
-
-
-
-            <TextView
-                android:id="@+id/t4"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t5"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t6"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t7"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t8"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t9"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t10"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
+                android:layout_height="100dp"/>
 
         </LinearLayout>
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ee9"
     tools:context="com.example.zwm.myapplication.activity.DisplayActivity">
 
     <TextView
@@ -106,62 +107,14 @@
                 android:textSize="16sp" />
             <!--细粒度-->
 
-
-
-
-
-
-
+            <!--用作测试-->
             <TextView
                 android:id="@+id/test_http"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="等待http响应..."
                 android:background="@drawable/m_input_text_border" />
-
-
-
-            <TextView
-                android:id="@+id/t4"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t5"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t6"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t7"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t8"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t9"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
-
-            <TextView
-                android:id="@+id/t10"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:text="文本域" />
+            <!--用作测试-->
 
 
         </LinearLayout>

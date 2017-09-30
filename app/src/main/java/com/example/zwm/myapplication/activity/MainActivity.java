@@ -1,5 +1,6 @@
 package com.example.zwm.myapplication.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String PUSERVLET_URL_PATH = ROOT_URL_PATH + "/puservlet";
 
     private EditText inputText;
-    private TextView testHttp;
     private Button commitButton;
     private String postText;
     private String resultFromPU;
@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         inputText = (EditText) findViewById(R.id.m_input_text);
-        testHttp = (TextView) findViewById(R.id.test_http);
         inputText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -50,14 +49,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        linearLayoutOfCD = (LinearLayout) findViewById(R.id.container_of_cd);
+
         commitButton = (Button) findViewById(R.id.commit_button);
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 去掉分类标注部分的所有（上次）记录，以及用于展示的框框边线
-                linearLayoutOfCD.removeAllViewsInLayout();
-//                linearLayoutOfCD.setBackground(null);
 
                 try {
                     postText = "sents=" + inputText.getText().toString();
@@ -68,82 +64,20 @@ public class MainActivity extends AppCompatActivity {
                             resultFromPU = HttpUtils.post(PUSERVLET_URL_PATH, postText);
                             // 将输入文本发送至服务器，取得分析结果
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // for test 显示服务器返回的分类结果信息
-                                    testHttp.setText(resultFromPU);
-                                    // for test 显示服务器返回的分类结果信息
-
-                                    if (!resultFromPU.equals("") && resultFromPU != null) {
-                                        String[] partArr = resultFromPU.split("\\|");
-
-                                        // 有负面信息
-                                        if (partArr.length > 1) {
-                                            if (!partArr[1].equals("")) {
-//                                                Drawable pos_distribution_border = getResources().getDrawable(R.drawable.pos_distribution_border);
-//                                                linearLayoutOfCD.setBackground(pos_distribution_border);
-                                                String[] positionArr = partArr[1].split(" ");
-
-                                                HashMap<Integer, TextView> textViewMapOfSents = new HashMap<Integer, TextView>();
-                                                textViewMapOfSents.clear();
-
-                                                // 将文本输入框中的文本分句,逐句处理。先按负例处理，跳过空句子，后由分析结果信息重新处理正例句子
-                                                String[] sentArr = inputText.getText().toString().split("[。！？]");
-                                                for (int i = 0; i < sentArr.length; i++) {
-                                                    if (!sentArr[i].equals("")) {
-                                                        TextView tv = new TextView(MainActivity.this);
-//                                                        tv.setId(); // 怎么弄id？？？
-                                                        tv.setWidth(linearLayoutOfCD.getWidth());
-                                                        tv.setText(sentArr[i]);
-                                                        tv.setTextColor(Color.parseColor("#000000"));
-                                                        tv.setTextSize(16f);
-                                                        tv.setBackgroundResource(R.drawable.neg_distribution_border);
-                                                        textViewMapOfSents.put(i, tv);
-                                                    }
-                                                }
-
-                                                // 为所有的正例句子添加底色
-                                                for (int i = 0; i < positionArr.length; i++) {
-                                                    String text = sentArr[ Integer.parseInt(positionArr[i]) ];
-                                                    if (!text.equals("")) {
-                                                        TextView tv = textViewMapOfSents.get( Integer.parseInt(positionArr[i]) );
-                                                        tv.setBackgroundResource(R.drawable.pos_distribution_border);
-
-//                                                        // 没到处理最后一个句子之前，都需要画一条分割线
-//                                                        if (i < positionArr.length - 1) {
-//                                                            TextView line = new TextView(MainActivity.this);
-//                                                            line.setWidth(linearLayoutOfCD.getWidth());
-//                                                            line.setHeight(1);
-//                                                            line.setBackgroundColor(Color.parseColor("#000000"));
-//                                                            linearLayoutOfCD.addView(line);
-//                                                        }
-                                                    }
-
-                                                }
-                                                Set<Integer> keySet = textViewMapOfSents.keySet();
-                                                ArrayList<Integer> keyList = new ArrayList<Integer>(keySet);
-                                                Collections.sort(keyList);
-                                                for (int position : keyList) {
-                                                    linearLayoutOfCD.addView(textViewMapOfSents.get(position));
-                                                }
-                                            }
-                                        }
+                            // 将输入文本和分析结果传送至 DisplayActivity 活动中，并启动该活动
+                            Intent intentForDisplayActivity = new Intent();
+                            intentForDisplayActivity.setClass(MainActivity.this, DisplayActivity.class);
+                            intentForDisplayActivity.putExtra("inputText", inputText.getText().toString());
+                            intentForDisplayActivity.putExtra("resultFromPU", resultFromPU);
+                            startActivity(intentForDisplayActivity);
+                            // 将分析结果传送至 DisplayActivity 活动中，并启动该活动
 
 
-                                    }
-                                    else {
-                                        //
-                                    }
-
-
-                                }
-                            });
                         }
                     }.start();
 
                 } catch (Exception e) {
-                    testHttp.setText(e.getMessage());
+
                 }
 
 
