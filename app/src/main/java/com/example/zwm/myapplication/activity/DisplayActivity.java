@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-public class DisplayActivity extends AppCompatActivity {
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
+public class DisplayActivity extends SwipeBackActivity {
     private String inputText;
     private String resultFromPU;
     private TextView testHttp;

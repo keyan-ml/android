@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/zwm/workplace/AndroidStudioProjects/MyApplication/SwipeBackLibrary/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/shadow_left.png",
+        "source": "/home/zwm/workplace/AndroidStudioProjects/MyApplication/SwipeBackLibrary/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/shadow_left.png"
+    },
+    {
+        "merged": "/home/zwm/workplace/AndroidStudioProjects/MyApplication/SwipeBackLibrary/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/shadow_bottom.png",
+        "source": "/home/zwm/workplace/AndroidStudioProjects/MyApplication/SwipeBackLibrary/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/shadow_bottom.png"
+    },
+    {
+        "merged": "/home/zwm/workplace/AndroidStudioProjects/MyApplication/SwipeBackLibrary/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/shadow_right.png",
+        "source": "/home/zwm/workplace/AndroidStudioProjects/MyApplication/SwipeBackLibrary/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/shadow_right.png"
+    }
+]
