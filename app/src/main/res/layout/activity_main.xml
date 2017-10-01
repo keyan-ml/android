@@ -61,11 +61,13 @@
 
             <Button
                 android:id="@+id/commit_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-
-                android:text="提交"/>
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/commit_button_selector"
+                android:text="提交"
+                android:textSize="18sp" />
             <!--文本域-->
 
             <TextView

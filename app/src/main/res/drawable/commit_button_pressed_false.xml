@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 圆角 -->
     <corners
-        android:radius="1dp"/><!-- 设置圆角半径 -->
+        android:radius="20dp"/><!-- 设置圆角半径 -->
 
     <!-- 间隔 -->
     <padding
@@ -14,5 +14,6 @@
     <solid
         android:color="#FF9192"
         />
+
 
 </shape>
