@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zwm.myapplication.util.HttpUtils;
 import com.example.zwm.myapplication.R;
@@ -64,13 +65,20 @@ public class MainActivity extends AppCompatActivity {
                             resultFromPU = HttpUtils.post(PUSERVLET_URL_PATH, postText);
                             // 将输入文本发送至服务器，取得分析结果
 
-                            // 将输入文本和分析结果传送至 DisplayActivity 活动中，并启动该活动
-                            Intent intentForDisplayActivity = new Intent();
-                            intentForDisplayActivity.setClass(MainActivity.this, DisplayActivity.class);
-                            intentForDisplayActivity.putExtra("inputText", inputText.getText().toString());
-                            intentForDisplayActivity.putExtra("resultFromPU", resultFromPU);
-                            startActivity(intentForDisplayActivity);
-                            // 将分析结果传送至 DisplayActivity 活动中，并启动该活动
+                            if (resultFromPU != null) {
+                                // 将输入文本和分析结果传送至 DisplayActivity 活动中，并启动该活动
+                                Intent intentForDisplayActivity = new Intent();
+                                intentForDisplayActivity.setClass(MainActivity.this, DisplayActivity.class);
+                                intentForDisplayActivity.putExtra("inputText", inputText.getText().toString());
+                                intentForDisplayActivity.putExtra("resultFromPU", resultFromPU);
+                                startActivity(intentForDisplayActivity);
+                                // 将分析结果传送至 DisplayActivity 活动中，并启动该活动
+                            }
+                            else {
+                                // 服务器出问题了
+                                Toast.makeText(MainActivity.this, "服务器出错，请您与管理员联系！", Toast.LENGTH_SHORT).show();
+                                // 服务器出问题了
+                            }
 
 
                         }
