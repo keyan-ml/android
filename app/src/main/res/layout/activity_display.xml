@@ -11,7 +11,7 @@
         android:id="@+id/title_of_total_body"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:text="(｀･ω･´)科研训练展示(´･ω･｀)"
+        android:text="(｀･ω･´)智能分析(´･ω･｀)"
         android:textSize="20sp"
         android:gravity="center"
         android:background="#ddd" />
