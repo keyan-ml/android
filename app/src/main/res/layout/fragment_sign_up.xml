@@ -58,7 +58,7 @@
                         android:id="@+id/sign_up_uname"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:hint="昵称"
+                        android:hint="昵称（允许为空!）"
                         android:textAlignment="center"
                         android:inputType="text" />
                 </LinearLayout>
@@ -78,7 +78,7 @@
                         android:id="@+id/sign_up_uemailaddress"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:hint="username@example.com"
+                        android:hint="email@example.com"
                         android:textAlignment="center"
                         android:inputType="text" />
                 </LinearLayout>
@@ -117,12 +117,12 @@
                         android:layout_gravity="center_vertical"/>
 
                     <EditText
-                        android:id="@+id/sign_up_uemailaddress_confirm"
+                        android:id="@+id/sign_up_uemailaddress_confirmed"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:hint="......"
                         android:textAlignment="center"
-                        android:inputType="text" />
+                        android:inputType="textPassword" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -142,7 +142,7 @@
                         android:layout_height="60dp"
                         android:textAlignment="center"
                         android:hint="学校/单位"
-                        android:inputType="textPassword" />
+                        android:inputType="text" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -163,7 +163,7 @@
                         android:layout_height="60dp"
                         android:textAlignment="center"
                         android:hint="电话/手机"
-                        android:inputType="textPassword" />
+                        android:inputType="text" />
                 </LinearLayout>
 
                 <Button

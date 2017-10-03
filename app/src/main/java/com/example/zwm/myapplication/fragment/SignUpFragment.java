@@ -1,8 +1,9 @@
 package com.example.zwm.myapplication.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.zwm.myapplication.R;
-import com.example.zwm.myapplication.model.User;
+import com.example.zwm.myapplication.activity.InputPostActivity;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 ///**
@@ -33,9 +34,10 @@ public class SignUpFragment extends Fragment {
     private EditText unameView;
     private EditText uemailaddressView;
     private EditText upasswordView;
+    private EditText upasswordConfirmedView;
     private EditText uorganizationView;
     private EditText ucontactwayView;
-    private Button commit;
+    private Button signUpButton;
     // view
 
     private static final String SIGN_UP_URL = "http://182.254.247.94:8080/KeyanWeb/signupservlet";
@@ -44,6 +46,7 @@ public class SignUpFragment extends Fragment {
     private String uname;
     private String uemailaddress;
     private String upassword;
+    private String upasswordconfirmed;
     private String uorganization;
     private String ucontactway;
 
@@ -112,13 +115,14 @@ public class SignUpFragment extends Fragment {
         unameView = (EditText) activity.findViewById(R.id.sign_up_uname);
         uemailaddressView = (EditText) activity.findViewById(R.id.sign_up_uemailaddress);
         upasswordView = (EditText) activity.findViewById(R.id.sign_up_upassword);
+        upasswordConfirmedView = (EditText) activity.findViewById(R.id.sign_up_uemailaddress_confirmed);
         uorganizationView = (EditText) activity.findViewById(R.id.sign_up_uorganization);
         ucontactwayView = (EditText) activity.findViewById(R.id.sign_up_ucontactway);
-        commit = (Button) activity.findViewById(R.id.sign_up_button);
+        signUpButton = (Button) activity.findViewById(R.id.sign_up_button);
     }
 
     private void initEvents() {
-        commit.setOnClickListener(new View.OnClickListener() {
+        signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("MyDebug", "Clicked");
@@ -126,14 +130,60 @@ public class SignUpFragment extends Fragment {
                     uname = unameView.getText().toString();
                     uemailaddress = uemailaddressView.getText().toString();
                     upassword = upasswordView.getText().toString();
+                    upasswordconfirmed = upasswordConfirmedView.getText().toString();
                     uorganization = uorganizationView.getText().toString();
                     ucontactway = ucontactwayView.getText().toString();
 
+                    // 邮箱地址不能为空
+                    String regEx = "[a-zA-Z_0-9]{1,}[0-9]{0,}@(([a-zA-z0-9]-*){1,}\\.){1,3}[a-zA-z\\-]{1,}";
                     if (uemailaddress.equals("")) {
                         uemailaddressView.setText("邮箱地址不能为空!");
                         uemailaddressView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
+                    }
+                    // 邮箱地址不符合规则
+                    else if (!uemailaddress.matches(regEx)) {
+                        uemailaddressView.setText("邮箱地址格式不正确!");
+                        uemailaddressView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
                     }
 
+                    // 密码不能为空
+                    if (upassword.equals("")) {
+                        upasswordView.setText("密码不能为空!");
+                        upasswordView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
+                    }
+
+                    // 确认密码不能为空
+                    if (upasswordconfirmed.equals("")) {
+                        upasswordConfirmedView.setText("请再次填写密码!");
+                        upasswordConfirmedView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
+                    }
+
+                    // 两次密码必须一致
+                    if (!upassword.equals(upasswordconfirmed)) {
+                        upasswordConfirmedView.setText("两次密码必须一致!");
+                        upasswordConfirmedView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
+                    }
+
+                    // 单位不能为空
+                    if (uorganization.equals("")) {
+                        uorganizationView.setText("单位不能为空!");
+                        uorganizationView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
+                    }
+
+                    // 联系方式不能为空
+                    if (ucontactway.equals("")) {
+                        ucontactwayView.setText("联系方式不能为空!");
+                        ucontactwayView.setTextColor(Color.parseColor("#ff0000"));
+                        return;
+                    }
+
+                    // 没有以上问题（通过所有判断），现在可以上传至服务器，进行最后一道判断：邮箱是否已存在（即是否可用）
                     new Thread(){
                         @Override
                         public void run() {
@@ -145,9 +195,36 @@ public class SignUpFragment extends Fragment {
                                     + "&uorganization=" + uorganization
                                     + "&ucontactway=" + ucontactway;
 
-                            String resultFromSignUpServlet = HttpUtils.post(SIGN_UP_URL, postString);
-                            Log.d("MyDebug", resultFromSignUpServlet);
-                        }
+                            String result = HttpUtils.post(SIGN_UP_URL, postString);
+                            // 返回信息为"failed"，说明邮箱已存在，作提示
+                            if (result.contains("failed")) {
+                                Log.d("MyDebug", "[result-failed]: " + result);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uemailaddressView.setText("该邮箱已存在!");
+                                        uemailaddressView.setTextColor(Color.parseColor("#ff0000"));
+                                    }
+                                });
+                            }
+                            // 返回信息不是"failed"，即"success"，本次注册成功，随后跳转到功能界面
+                            else {
+                                Log.d("MyDebug", "[result-success]: " + result);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        SharedPreferences.Editor spEditor = getActivity().getSharedPreferences("SignInInFo", Context.MODE_PRIVATE).edit();
+                                        spEditor.putString("uemailaddress", uemailaddress);
+                                        spEditor.putString("upassword", upassword);
+                                        spEditor.commit();
+
+                                        Intent intent = new Intent();
+                                        intent.setClass(getActivity(), InputPostActivity.class);
+                                        getActivity().startActivity(intent);
+                                    }
+                                });
+                            } // else
+                        } // run()
                     }.start();
                 } catch (Exception e) {
                     e.printStackTrace();

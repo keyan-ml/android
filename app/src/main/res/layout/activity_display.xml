@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ee9"
-    tools:context="com.example.zwm.myapplication.activity.DisplayActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/title_of_total_body"
@@ -16,110 +12,13 @@
         android:gravity="center"
         android:background="#ddd" />
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_of_total_body"
-        android:scrollbars="none" >
+    <include layout="@layout/top_bar_view" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-            <!--分类标注-->
-            <TextView
-                android:id="@+id/title_of_classification_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="分类标注"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
+    </android.support.v4.view.ViewPager>
 
-            <LinearLayout
-                android:id="@+id/container_of_cd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/classification_display"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <!--分类标注-->
-
-            <!--正负例分布-->
-            <TextView
-                android:id="@+id/title_of_pos_neg_distribution"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="正负例分布"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
-
-            <TextView
-                android:id="@+id/pos_neg_distribution"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:textSize="16sp" />
-            <!--正负例分布-->
-
-            <!--细粒度-->
-            <TextView
-                android:id="@+id/title_of_transe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="细粒度"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
-
-            <TextView
-                android:id="@+id/transe"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:textSize="16sp" />
-            <!--细粒度-->
-
-            <!--用作测试-->
-            <TextView
-                android:id="@+id/test_http"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="等待http响应..."
-                android:background="@drawable/m_input_text_border" />
-            <!--用作测试-->
-
-
-        </LinearLayout>
-
-    </ScrollView>
-
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

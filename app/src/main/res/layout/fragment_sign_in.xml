@@ -57,6 +57,7 @@
                         android:id="@+id/sign_in_uemailaddress"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
+                        android:text="1210500550@qq.com"
                         android:inputType="text" />
                 </LinearLayout>
 
@@ -75,10 +76,12 @@
                         android:id="@+id/sign_in_upassword"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
+                        android:text="1210500"
                         android:inputType="textPassword" />
                 </LinearLayout>
 
                 <Button
+                    android:id="@+id/sign_in_button"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="10dp"

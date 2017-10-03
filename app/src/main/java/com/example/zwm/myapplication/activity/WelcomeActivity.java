@@ -2,21 +2,14 @@ package com.example.zwm.myapplication.activity;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.example.zwm.myapplication.R;
-import com.example.zwm.myapplication.fragment.SignInFragment;
-import com.example.zwm.myapplication.fragment.SignUpFragment;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class WelcomeActivity extends FragmentActivity implements View.OnClickListener {
     // View
     private Button signInButton;
     private Button signUpButton;
@@ -25,7 +18,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_welcome);
 
         initViews();
         initEvents();
@@ -42,13 +35,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void initEvents() {
         signInButton.setOnClickListener(this);
         signUpButton.setOnClickListener(this);
+
+//        ((Button) findViewById(R.id.test)).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent tempIntent = new Intent();
+//                tempIntent.setClass(WelcomeActivity.this, ViewPagerActivity.class);
+//                Log.d("MyDebug", "启动 ViewPagerActivity");
+//                startActivity(tempIntent);
+//            }
+//        });
     }
 
 
     @Override
     public void onClick(View view) {
         Intent intent = new Intent();
-        intent.setClass(MainActivity.this, SiginInAndUpActivity.class);
+        intent.setClass(WelcomeActivity.this, SiginInAndUpActivity.class);
         switch (view.getId()) {
             case R.id.goto_sign_in_button:
 //                Log.d("MyDebug", "点击了登录");
@@ -57,6 +60,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.goto_sign_up_button:
 //                Log.d("MyDebug", "点击了注册");
                 intent.putExtra("fragmentName", "SignUpFragment");
+                break;
         }
         startActivity(intent);
     }
