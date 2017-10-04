@@ -80,6 +80,14 @@
                         android:inputType="textPassword" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/sign_in_error_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ff0000"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
                 <Button
                     android:id="@+id/sign_in_button"
                     android:layout_width="match_parent"

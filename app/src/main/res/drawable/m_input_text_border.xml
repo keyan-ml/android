@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 圆角 -->
     <corners
-        android:radius="5dp"/><!-- 设置圆角半径 -->
+        android:radius="2dp"/><!-- 设置圆角半径 -->
 
     <!-- 间隔 -->
     <padding
@@ -12,7 +12,7 @@
         android:bottom="2dp"/><!-- 各方向的间隔 -->
     <!-- 填充 -->
     <solid
-        android:color="#BBFFFF"/><!-- 填充的颜色 -->
+        android:color="#FFF8DC"/><!-- 填充的颜色 -->
 
     <!-- 描边 -->
     <stroke

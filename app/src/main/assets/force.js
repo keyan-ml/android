@@ -87,7 +87,7 @@ function showforce(nodes,links){
                             maxRadius : 25,
                             gravity : 1.1,
                             scaling : 1.1,
-                            roam : 'move',
+//                            roam : 'move',
                             nodes : nodes,
                             links : links,
                         }

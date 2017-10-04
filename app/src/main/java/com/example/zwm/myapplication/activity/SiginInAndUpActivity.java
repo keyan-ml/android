@@ -36,7 +36,7 @@ public class SiginInAndUpActivity extends AppCompatActivity {
 
 
     private void initViews() {
-        fragmentContent = (FrameLayout) findViewById(R.id.fragment_content);
+        fragmentContent = (FrameLayout) findViewById(R.id.fragment_content_sign_in_and_up);
 
         signInFragment = null;
         signUpFragment = null;
@@ -49,12 +49,12 @@ public class SiginInAndUpActivity extends AppCompatActivity {
 
         if (signInFragment == null) {
             signInFragment = new SignInFragment();
-            transaction.add(R.id.fragment_content, signInFragment);
+            transaction.add(R.id.fragment_content_sign_in_and_up, signInFragment);
         }
 
         if (signUpFragment == null) {
             signUpFragment = new SignUpFragment();
-            transaction.add(R.id.fragment_content, signUpFragment);
+            transaction.add(R.id.fragment_content_sign_in_and_up, signUpFragment);
         }
 
         switch (fragmentName) {

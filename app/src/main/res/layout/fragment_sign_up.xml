@@ -41,7 +41,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:background="#aff"
-                android:gravity="center_vertical" >
+                android:gravity="center" >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -57,7 +57,7 @@
                     <EditText
                         android:id="@+id/sign_up_uname"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
+                        android:layout_height="50dp"
                         android:hint="昵称（允许为空!）"
                         android:textAlignment="center"
                         android:inputType="text" />
@@ -166,11 +166,19 @@
                         android:inputType="text" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/sign_up_error_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ff0000"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
                 <Button
                     android:id="@+id/sign_up_button"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:text="注册" />
 
             </LinearLayout>

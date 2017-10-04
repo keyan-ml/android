@@ -7,7 +7,7 @@
     tools:context="com.example.zwm.myapplication.activity.SiginInAndUpActivity">
 
     <FrameLayout
-        android:id="@+id/fragment_content"
+        android:id="@+id/fragment_content_sign_in_and_up"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 

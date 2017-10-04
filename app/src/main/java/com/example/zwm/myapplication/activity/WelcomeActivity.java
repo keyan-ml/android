@@ -36,15 +36,15 @@ public class WelcomeActivity extends FragmentActivity implements View.OnClickLis
         signInButton.setOnClickListener(this);
         signUpButton.setOnClickListener(this);
 
-//        ((Button) findViewById(R.id.test)).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent tempIntent = new Intent();
-//                tempIntent.setClass(WelcomeActivity.this, ViewPagerActivity.class);
-//                Log.d("MyDebug", "启动 ViewPagerActivity");
-//                startActivity(tempIntent);
-//            }
-//        });
+        ((Button) findViewById(R.id.test)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent tempIntent = new Intent();
+                tempIntent.setClass(WelcomeActivity.this, MainActivity.class);
+                Log.d("MyDebug", "启动 ViewPagerActivity");
+                startActivity(tempIntent);
+            }
+        });
     }
 
 

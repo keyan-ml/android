@@ -19,8 +19,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.DisplayActivity" />
-        <activity android:name=".activity.InputPostActivity" />
-        <activity android:name=".activity.SiginInAndUpActivity"></activity>
+        <activity android:name=".activity.SiginInAndUpActivity" />
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.FeedBackActivity"></activity>
     </application>
 
 </manifest>
