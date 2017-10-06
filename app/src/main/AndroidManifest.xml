@@ -44,6 +44,9 @@
         <activity
             android:name=".activity.ModifyPasswordActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.SettingsActivity" />
+        <activity android:name=".activity.HistoryActivity" />
+        <activity android:name=".activity.SettingsFragmentsActivity"></activity>
     </application>
 
 </manifest>

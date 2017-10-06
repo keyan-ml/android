@@ -1,18 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/top_bar_of_feedback"
+        android:id="@+id/top_bar_of_clear_space"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="#fff">
         <ImageView
-            android:id="@+id/feedback_back_view"
+            android:id="@+id/clear_space_back_view"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:paddingRight="20dp"
@@ -22,55 +20,43 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:text="反馈中心"
+            android:text="清理缓存"
             android:textColor="#000"
             android:textSize="22sp"
             android:layout_centerInParent="true"
             android:gravity="center"/>
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#aaa"/>
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="#aaa"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-        <EditText
-            android:id="@+id/feedback_info"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/m_input_text_border"
-            android:gravity="top"
-            android:hint="您的建议是推动我们前进的强大动力！\nn_n" />
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
         <TextView
-            android:id="@+id/feedback_error_info"
+            android:id="@+id/clear_space_text_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:gravity="center"
-            android:textColor="#ff0000"
-            android:textStyle="bold" />
+            android:textColor="#000"
+            android:textSize="18sp"/>
 
         <Button
-            android:id="@+id/feedback_commit"
+            android:id="@+id/clear_space_confirm_button"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/button_selector"
-            android:text="提交"
+            android:text="清理"
+            android:textSize="20sp"
             android:textColor="#fff"
-            android:textSize="22sp" />
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_selector"/>
 
     </LinearLayout>
 
