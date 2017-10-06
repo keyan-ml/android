@@ -135,9 +135,9 @@ public class UserInfoActivity extends AppCompatActivity {
 
                                 postString = "postreason=modify"
                                         + "&uemailaddress=" + uemailaddress
-                                        + "&uname=" + unameEditor.getText().toString()
-                                        +"&uorganization=" + uorganizationEditor.getText().toString()
-                                        +"&ucontactway=" + ucontactwayEditor.getText().toString();
+                                        + "&uname=" + new String(unameEditor.getText().toString().getBytes(), "UTF-8")
+                                        +"&uorganization=" + new String(uorganizationEditor.getText().toString().getBytes(), "UTF-8")
+                                        +"&ucontactway=" + new String(ucontactwayEditor.getText().toString().getBytes(), "UTF-8");
                                 result = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
                                 Log.d("MyDebug", result);
 //                                final String[] userInfoArr = result.split("\\|");

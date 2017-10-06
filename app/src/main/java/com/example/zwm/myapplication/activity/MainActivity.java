@@ -2,16 +2,13 @@ package com.example.zwm.myapplication.activity;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.fragment.InputPostFragment;
@@ -26,9 +23,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Fragment currentFragment;
 
-    private LinearLayout tabInputPost;
-    private LinearLayout tabOther;
-    private LinearLayout tabUser;
+    private ImageView tabInputPost;
+    private ImageView tabOther;
+    private ImageView tabUser;
 
     // 两个Fragment
     private InputPostFragment inputPostFragment;
@@ -48,9 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initViews() {
         instance = this;
 
-        tabInputPost = (LinearLayout) findViewById(R.id.tab_input_post);
-        tabOther = (LinearLayout) findViewById(R.id.tab_other);
-        tabUser = (LinearLayout) findViewById(R.id.tab_user);
+        tabInputPost = (ImageView) findViewById(R.id.tab_input_post);
+        tabOther = (ImageView) findViewById(R.id.tab_other);
+        tabUser = (ImageView) findViewById(R.id.tab_user);
 
         inputPostFragment = null;
         otherFragment = null;
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         hideFragments(transaction);
 
-        tabInputPost.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
+        tabInputPost.setImageResource(R.mipmap.input_post_selected_icon);
         transaction.show(inputPostFragment);
 //        currentFragment = inputPostFragment;
         transaction.commit();
@@ -96,15 +93,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void hideFragments(FragmentTransaction transaction) {
         if (inputPostFragment != null) {
-            tabInputPost.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
+            tabInputPost.setImageResource(R.mipmap.input_post_icon);
             transaction.hide(inputPostFragment);
         }
         if (otherFragment != null) {
-            tabOther.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
+            tabOther.setImageResource(R.mipmap.save_result_icon);
             transaction.hide(otherFragment);
         }
         if (userFragment != null) {
-            tabUser.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
+            tabUser.setImageResource(R.mipmap.name_icon);
             transaction.hide(userFragment);
         }
     }
@@ -118,15 +115,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (view.getId()) { // 根据点击的View的id，设置响应动作
             case R.id.tab_input_post:
-                tabInputPost.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
+                tabInputPost.setImageResource(R.mipmap.input_post_selected_icon);
                 transaction.show(inputPostFragment);
                 break;
             case R.id.tab_other:
-                tabOther.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
+                tabOther.setImageResource(R.mipmap.save_selected_icon);
                 transaction.show(otherFragment);
                 break;
             case R.id.tab_user:
-                tabUser.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
+                tabUser.setImageResource(R.mipmap.name_selected_icon);
                 transaction.show(userFragment);
         }
         transaction.commit();
