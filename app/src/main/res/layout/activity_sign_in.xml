@@ -1,0 +1,148 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/sign_in_bg"
+    tools:context="com.example.zwm.myapplication.fragment.SignInFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <!--<TextView-->
+            <!--android:id="@+id/title_sign_in"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:background="#aaa"-->
+            <!--android:text="智能分析"-->
+            <!--android:textSize="20sp"-->
+            <!--android:gravity="center"/>-->
+
+        <LinearLayout
+            android:id="@+id/linear_layout_center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_centerInParent="true">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_drawer"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@mipmap/name_icon" />
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="35dp"
+                    android:background="#000"/>
+
+                <EditText
+                    android:id="@+id/sign_in_uemailaddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/edit_text_bg"
+                    android:paddingLeft="10dp"
+                    android:inputType="text"
+                    android:maxLength="44"
+                    android:text="1210500550@qq.com" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border_drawer"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:src="@mipmap/password_icon" />
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="35dp"
+                    android:background="#000"/>
+
+                <EditText
+                    android:id="@+id/sign_in_upassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/edit_text_bg"
+                    android:paddingLeft="10dp"
+                    android:inputType="textPassword"
+                    android:maxLength="15"
+                    android:text="1210500" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/sign_in_error_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#ff0000"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="10dp"
+                android:text="登录"
+                android:textSize="22sp"
+                android:textColor="@color/colorButtonText"
+                android:background="@drawable/button_selector"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/sign_in_forget_password"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="忘记密码"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/colorButtonText"/>
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#fff"/>
+
+            <TextView
+                android:id="@+id/sign_in_go_sign_up"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="注册"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:textColor="@color/colorButtonText"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

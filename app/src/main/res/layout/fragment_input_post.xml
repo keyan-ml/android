@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:text="文本域"
             android:textColor="@android:color/black"
             android:textSize="22sp"
@@ -53,10 +53,11 @@
         <Button
             android:id="@+id/commit_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/commit_button_selector"
+            android:background="@drawable/button_selector"
             android:text="提交"
             android:textSize="18sp" />
 

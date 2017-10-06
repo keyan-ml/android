@@ -11,17 +11,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.WelcomeActivity">
+        <activity
+            android:name=".activity.FirstWelcomeActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.DisplayActivity" />
-        <activity android:name=".activity.SiginInAndUpActivity" />
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.FeedBackActivity"></activity>
+        <activity
+            android:name=".activity.DisplayActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.FeedBackActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.TestActivity" />
+        <activity android:name=".activity.UserInfoActivity" />
+        <activity android:name=".activity.SignInActivity" />
+        <activity android:name=".activity.SignUpActivity" />
+        <activity android:name=".activity.ModifyPasswordActivity"></activity>
     </application>
 
 </manifest>

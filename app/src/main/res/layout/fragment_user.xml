@@ -26,48 +26,93 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="20dp"
-                android:orientation="vertical"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+                android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/user_user_info"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:text="个人资料"
-                    android:textSize="20sp" />
+                    android:layout_height="55dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/userinfo_icon"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="个人资料"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="5dp"/>
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="20dp"
+                        android:src="@mipmap/right_arrow"/>
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:text="其他"
-                    android:textSize="20sp" />
+                    android:layout_height="55dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/settings_icon"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="设置"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="5dp"/>
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="20dp"
+                        android:src="@mipmap/right_arrow"/>
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
                     android:id="@+id/user_feedback"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:text="反馈中心"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp"
-                    android:text="设置"
-                    android:textSize="20sp" />
+                    android:layout_height="55dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/feedback_icon"/>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="反馈中心"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="5dp"/>
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="20dp"
+                        android:src="@mipmap/right_arrow"/>
+                </LinearLayout>
 
                 <Button
+                    android:id="@+id/user_sign_out_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:background="#ff0000"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_selector"
                     android:text="退出登录"
                     android:textColor="#ffffff"
                     android:textSize="16sp" />

@@ -1,32 +1,30 @@
-package com.example.zwm.myapplication.fragment;
+package com.example.zwm.myapplication.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
-import com.example.zwm.myapplication.activity.MainActivity;
 import com.example.zwm.myapplication.util.HttpUtils;
 
-public class SignInFragment extends Fragment {
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
+    public static Activity instance;
+
     // view
     private EditText uemailaddressView;
     private EditText upasswordView;
     private TextView errorInfoView;
     private Button signInButton;
+    private TextView modifyPasswordView;
+    private TextView signUpView;
     // view
 
     private static final String SIGN_IN_URL = "http://182.254.247.94:8080/KeyanWeb/signinservlet";
@@ -36,34 +34,42 @@ public class SignInFragment extends Fragment {
 
     private String resultFromPost;
 
+
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_in);
 
-        FragmentActivity activity = getActivity();
-
-        initViews(activity);
+        initViews();
         initEvents();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_in, container, false);
-    }
+    private void initViews() {
+        instance = this;
 
-    private void initViews(FragmentActivity activity) {
-        uemailaddressView = (EditText) activity.findViewById(R.id.sign_in_uemailaddress);
-        upasswordView = (EditText) activity.findViewById(R.id.sign_in_upassword);
-        errorInfoView = (TextView) activity.findViewById(R.id.sign_in_error_info);
-        signInButton = (Button) activity.findViewById(R.id.sign_in_button);
+        if (FirstWelcomeActivity.instance != null) {
+            FirstWelcomeActivity.instance.finish();
+            FirstWelcomeActivity.instance = null;
+        }
+
+        uemailaddressView = (EditText) findViewById(R.id.sign_in_uemailaddress);
+        upasswordView = (EditText) findViewById(R.id.sign_in_upassword);
+        errorInfoView = (TextView) findViewById(R.id.sign_in_error_info);
+        signInButton = (Button) findViewById(R.id.sign_in_button);
+        modifyPasswordView = (TextView) findViewById(R.id.sign_in_forget_password);
+        signUpView = (TextView) findViewById(R.id.sign_in_go_sign_up);
     }
 
     private void initEvents() {
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        signInButton.setOnClickListener(this);
+        modifyPasswordView.setOnClickListener(this);
+        signUpView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.sign_in_button:
                 // 登录按钮
                 uemailaddress = uemailaddressView.getText().toString();
                 upassword = upasswordView.getText().toString();
@@ -99,7 +105,7 @@ public class SignInFragment extends Fragment {
                         // 返回信息中有"failed"，为出错，具体错误需再次判断
                         if (resultFromPost.contains("failed")) {
 
-                            getActivity().runOnUiThread(new Runnable() {
+                            runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
 //                                    String[] resultArr = resultFromPost.split("_");
@@ -118,24 +124,34 @@ public class SignInFragment extends Fragment {
                         }
                         // 返回信息中不含有"failed"字样，说明登录成功
                         else {
-                            getActivity().runOnUiThread(new Runnable() {
+                            runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    SharedPreferences.Editor spEditor = getActivity().getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                                    SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
                                     spEditor.putString("uemailaddress", uemailaddress);
                                     spEditor.putString("upassword", upassword);
                                     spEditor.commit();
 
                                     Intent intent = new Intent();
-                                    intent.setClass(getActivity(), MainActivity.class);
-                                    getActivity().startActivity(intent);
+                                    intent.setClass(SignInActivity.this, MainActivity.class);
+                                    startActivity(intent);
                                 }
                             });
                         }
 
                     }
                 }.start();
-            }
-        });
+                break;
+            case R.id.sign_in_forget_password:
+                Intent intent = new Intent();
+                intent.setClass(this, ModifyPasswordActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.sign_in_go_sign_up:
+                Intent intentSignUp = new Intent();
+                intentSignUp.setClass(this, SignUpActivity.class);
+                startActivity(intentSignUp);
+                break;
+        }
     }
 }

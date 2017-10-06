@@ -1,0 +1,242 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/sign_up_bg"
+    tools:context="com.example.zwm.myapplication.fragment.SignUpFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_drawer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/name_icon"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="35dp"
+                        android:background="#000" />
+
+                    <EditText
+                        android:id="@+id/sign_up_uname"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:hint="昵称（允许为空!）"
+                        android:inputType="text"
+                        android:maxLength="10" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/border_drawer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!--<TextView-->
+                        <!--android:layout_width="50dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="邮箱" />-->
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/emailaddress_icon"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="35dp"
+                        android:background="#000" />
+
+                    <EditText
+                        android:id="@+id/sign_up_uemailaddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:hint="email@example.com"
+                        android:inputType="text"
+                        android:maxLength="44" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/border_drawer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/password_icon"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="35dp"
+                        android:background="#000" />
+
+                    <EditText
+                        android:id="@+id/sign_up_upassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:hint="允许长度为6-12位"
+                        android:inputType="textPassword"
+                        android:maxLength="12" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/border_drawer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/password_confirmed_icon"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="35dp"
+                        android:background="#000" />
+
+                    <EditText
+                        android:id="@+id/sign_up_uemailaddress_confirmed"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:hint="允许长度为6-12位"
+                        android:inputType="textPassword"
+                        android:maxLength="12" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/border_drawer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/organization_icon"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="35dp"
+                        android:background="#000" />
+
+                    <EditText
+                        android:id="@+id/sign_up_uorganization"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:hint="学校/单位"
+                        android:inputType="text"
+                        android:maxLength="50" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/border_drawer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:src="@mipmap/contactway_icon"/>
+
+                    <TextView
+                        android:layout_width="1dp"
+                        android:layout_height="35dp"
+                        android:background="#000" />
+
+                    <EditText
+                        android:id="@+id/sign_up_ucontactway"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:paddingLeft="10dp"
+                        android:background="@drawable/edit_text_bg"
+                        android:hint="电话/手机"
+                        android:inputType="text"
+                        android:maxLength="15" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/sign_up_error_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#ff0000"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/sign_up_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/button_selector"
+                    android:text="注册"
+                    android:textColor="@color/colorButtonText"
+                    android:textSize="22sp"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>

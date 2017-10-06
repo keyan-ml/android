@@ -1,11 +1,14 @@
 package com.example.zwm.myapplication.activity;
 
+import android.app.Activity;
 import android.graphics.Color;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -13,14 +16,15 @@ import android.widget.LinearLayout;
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.fragment.InputPostFragment;
 import com.example.zwm.myapplication.fragment.OtherFragment;
-import com.example.zwm.myapplication.fragment.SignInFragment;
-import com.example.zwm.myapplication.fragment.SignUpFragment;
 import com.example.zwm.myapplication.fragment.UserFragment;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    public static Activity instance;
+
     private final String TAB_NORMAL_COLOR = "#696969";
     private final String TAB_SELECTED_COLOR = "#8FBC8F";
-    private FrameLayout fragmentContentMain;
+
+    private Fragment currentFragment;
 
     private LinearLayout tabInputPost;
     private LinearLayout tabOther;
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private OtherFragment otherFragment;
     private UserFragment userFragment;
     // 两个Fragment
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViews() {
-        fragmentContentMain  = (FrameLayout) findViewById(R.id.fragment_content_main);
+        instance = this;
 
         tabInputPost = (LinearLayout) findViewById(R.id.tab_input_post);
         tabOther = (LinearLayout) findViewById(R.id.tab_other);
@@ -54,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initEvents() {
+        if (SignInActivity.instance != null) {
+            SignInActivity.instance.finish(); // 结束登录界面activity
+        }
+        if (SignUpActivity.instance != null) {
+            SignUpActivity.instance.finish(); // 结束注册界面activity
+        }
+
         tabInputPost.setOnClickListener(this);
         tabOther.setOnClickListener(this);
         tabUser.setOnClickListener(this);
@@ -78,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         tabInputPost.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
         transaction.show(inputPostFragment);
+//        currentFragment = inputPostFragment;
         transaction.commit();
     }
 

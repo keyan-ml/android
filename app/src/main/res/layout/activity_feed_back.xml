@@ -14,6 +14,8 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,7 +47,11 @@
     <Button
         android:id="@+id/feedback_commit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="提交"/>
+        android:layout_height="55dp"
+        android:layout_marginBottom="5dp"
+        android:text="提交"
+        android:textSize="22sp"
+        android:textColor="#fff"
+        android:background="@drawable/button_selector"/>
 
 </LinearLayout>

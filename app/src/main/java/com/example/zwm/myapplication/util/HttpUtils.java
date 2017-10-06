@@ -97,21 +97,27 @@ public class HttpUtils {
         return null;
     }
 
-    /**
-     * 查询快递
-     * @param expressNum
-     * @return
-     */
-    public static String getExpress(String expressNum) {
+    public static String post(String urlPath, String json, String encoding){
         try {
-            String urlPath = "http://apis.baidu.com/kuaidicom/express_api/express_api?muti=0&order=desc&nu="+expressNum;
-            Log.i("URL", urlPath);
-
             URL url = new URL(urlPath);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Charset", "UTF-8");
-            conn.setRequestProperty("apikey", "d384a0990655462d92ce672108ea6fc8");
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Charset", encoding);
+
+            // 设置请求的超时时间
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
+//            // 设置请求的头
+//            conn.setRequestProperty("User-Agent",
+//                "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
+
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+
+            OutputStream os = conn.getOutputStream();
+            os.write(json.getBytes("utf-8"));
+            os.flush();
+            os.close();
 
             if(conn.getResponseCode() == 200){
                 InputStream is = conn.getInputStream();
@@ -121,8 +127,6 @@ public class HttpUtils {
                 while((len = is.read(buf)) != -1) {
                     sb.append(new String(buf, 0, len));
                 }
-
-                Log.i("查询快递", sb.toString());
                 return sb.toString();
             }
 
@@ -132,5 +136,37 @@ public class HttpUtils {
 
         return null;
     }
+
+
+//    public static String getExpress(String expressNum) {
+//        try {
+//            String urlPath = "http://apis.baidu.com/kuaidicom/express_api/express_api?muti=0&order=desc&nu="+expressNum;
+//            Log.i("URL", urlPath);
+//
+//            URL url = new URL(urlPath);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            conn.setRequestMethod("GET");
+//            conn.setRequestProperty("Charset", "UTF-8");
+//            conn.setRequestProperty("apikey", "d384a0990655462d92ce672108ea6fc8");
+//
+//            if(conn.getResponseCode() == 200){
+//                InputStream is = conn.getInputStream();
+//                StringBuilder sb = new StringBuilder();
+//                int len = 0;
+//                byte[] buf = new byte[128];
+//                while((len = is.read(buf)) != -1) {
+//                    sb.append(new String(buf, 0, len));
+//                }
+//
+//                Log.i("查询快递", sb.toString());
+//                return sb.toString();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//    }
 
 }

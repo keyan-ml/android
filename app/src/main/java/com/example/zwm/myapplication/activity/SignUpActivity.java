@@ -1,26 +1,23 @@
-package com.example.zwm.myapplication.fragment;
+package com.example.zwm.myapplication.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
-import com.example.zwm.myapplication.activity.MainActivity;
 import com.example.zwm.myapplication.util.HttpUtils;
 
-public class SignUpFragment extends Fragment {
+public class SignUpActivity extends AppCompatActivity {
+    public static Activity instance;
     // view
     private EditText unameView;
     private EditText uemailaddressView;
@@ -42,35 +39,32 @@ public class SignUpFragment extends Fragment {
     private String ucontactway;
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_up);
 
-        FragmentActivity activity = getActivity();
-
-        initViews(activity);
+        initViews();
         initEvents();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    private void initViews() {
+        instance = this;
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_up, container, false);
-    }
-
-    private void initViews(FragmentActivity activity) {
-        unameView = (EditText) activity.findViewById(R.id.sign_up_uname);
-        uemailaddressView = (EditText) activity.findViewById(R.id.sign_up_uemailaddress);
-        upasswordView = (EditText) activity.findViewById(R.id.sign_up_upassword);
-        upasswordConfirmedView = (EditText) activity.findViewById(R.id.sign_up_uemailaddress_confirmed);
-        uorganizationView = (EditText) activity.findViewById(R.id.sign_up_uorganization);
-        ucontactwayView = (EditText) activity.findViewById(R.id.sign_up_ucontactway);
-        errorInfoView = (TextView) activity.findViewById(R.id.sign_up_error_info);
-        signUpButton = (Button) activity.findViewById(R.id.sign_up_button);
+        unameView = (EditText) findViewById(R.id.sign_up_uname);
+        uemailaddressView = (EditText) findViewById(R.id.sign_up_uemailaddress);
+        upasswordView = (EditText) findViewById(R.id.sign_up_upassword);
+        upasswordConfirmedView = (EditText) findViewById(R.id.sign_up_uemailaddress_confirmed);
+        uorganizationView = (EditText) findViewById(R.id.sign_up_uorganization);
+        ucontactwayView = (EditText) findViewById(R.id.sign_up_ucontactway);
+        errorInfoView = (TextView) findViewById(R.id.sign_up_error_info);
+        signUpButton = (Button) findViewById(R.id.sign_up_button);
     }
 
     private void initEvents() {
+//        if (SignInActivity.instance != null) {
+//            SignInActivity.instance.finish(); // 结束登录界面activity
+//        }
+
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,7 +135,7 @@ public class SignUpFragment extends Fragment {
                             Log.d("MyDebug", "[result]: " + result);
                             // 返回信息为"failed"，说明邮箱已存在，作提示
                             if (result.contains("failed")) {
-                                getActivity().runOnUiThread(new Runnable() {
+                                runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         uemailaddressView.setText("该邮箱已存在!");
@@ -151,17 +145,17 @@ public class SignUpFragment extends Fragment {
                             }
                             // 返回信息不是"failed"，即"success"，本次注册成功，随后跳转到功能界面
                             else {
-                                getActivity().runOnUiThread(new Runnable() {
+                                runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        SharedPreferences.Editor spEditor = getActivity().getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                                        SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
                                         spEditor.putString("uemailaddress", uemailaddress);
                                         spEditor.putString("upassword", upassword);
                                         spEditor.commit();
 
                                         Intent intent = new Intent();
-                                        intent.setClass(getActivity(), MainActivity.class);
-                                        getActivity().startActivity(intent);
+                                        intent.setClass(SignUpActivity.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
                                 });
                             } // else

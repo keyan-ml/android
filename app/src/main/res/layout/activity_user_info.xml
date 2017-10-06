@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/top_bar_of_user_info"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="#fff">
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:paddingRight="20dp"
+            android:layout_alignParentLeft="true"
+            android:src="@mipmap/left_arrow"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:text="个人信息"
+            android:textColor="#000"
+            android:textSize="22sp"
+            android:layout_centerInParent="true"
+            android:gravity="center"/>
+        <!--<TextView-->
+            <!--android:id="@+id/user_info_want_edit"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:paddingLeft="10dp"-->
+            <!--android:paddingRight="10dp"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:text="编辑"-->
+            <!--android:gravity="center" />-->
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp">
+
+
+        <LinearLayout
+            android:id="@+id/user_info_uemailaddress_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="55dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@mipmap/emailaddress_icon"/>
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="35dp"
+                android:background="#000" />
+
+            <EditText
+                android:id="@+id/user_info_uemailaddress"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingLeft="10dp"
+                android:background="@drawable/edit_text_bg"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                android:inputType="text"
+                android:maxLength="44" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_info_uname_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="55dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@mipmap/name_icon"/>
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="35dp"
+                android:background="#000" />
+
+            <EditText
+                android:id="@+id/user_info_uname"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingLeft="10dp"
+                android:layout_marginRight="2dp"
+                android:background="@drawable/edit_text_bg"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                android:inputType="text"
+                android:maxLength="10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_info_uorganization_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="55dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@mipmap/organization_icon"/>
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="35dp"
+                android:background="#000" />
+
+            <EditText
+                android:id="@+id/user_info_uorganization"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingLeft="10dp"
+                android:background="@drawable/edit_text_bg"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                android:inputType="text"
+                android:maxLength="50" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_info_ucontactway_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/edit_text_false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="55dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:src="@mipmap/contactway_icon"/>
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="35dp"
+                android:background="#000" />
+
+            <EditText
+                android:id="@+id/user_info_ucontactway"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingLeft="10dp"
+                android:background="@drawable/edit_text_bg"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                android:inputType="text"
+                android:maxLength="15" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/user_info_error_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ff0000"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/user_info_want_edit"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="5dp"
+            android:text="修改"
+            android:textSize="22sp"
+            android:textColor="@color/colorButtonText"
+            android:background="@drawable/button_selector"/>
+
+    </LinearLayout>
+
+</LinearLayout>

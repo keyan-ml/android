@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 间隔 -->
+    <padding
+        android:left="0dp"
+        android:top="30dp"
+        android:right="0dp"
+        android:bottom="30dp"/><!-- 各方向的间隔 -->
+
+    <solid
+        android:color="#000000"
+        />
+
+</shape>
