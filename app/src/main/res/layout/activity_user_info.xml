@@ -13,6 +13,7 @@
         android:layout_height="55dp"
         android:background="#fff">
         <ImageView
+            android:id="@+id/user_info_back_view"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:paddingRight="20dp"
@@ -101,6 +102,11 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:src="@mipmap/name_icon"/>
+
+            <TextView
+                android:layout_width="1dp"
+                android:layout_height="35dp"
+                android:background="#000" />
 
             <EditText
                 android:id="@+id/user_info_uname"
@@ -194,6 +200,7 @@
             android:id="@+id/user_info_error_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textColor="#ff0000"
             android:textStyle="bold"/>
 

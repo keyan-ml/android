@@ -1,5 +1,7 @@
 package com.example.zwm.myapplication.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,14 +18,17 @@ import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 public class UserInfoActivity extends AppCompatActivity {
+    public static Activity instance;
+
     private static final String MODIFYUSERINFO_SERVLET_URL = "http://182.254.247.94:8080/KeyanWeb/modifyuserinfoservlet";
 
-    private Button wantEditView;
+    private ImageView backBtn;
     private EditText unameEditor;
     private EditText uemailaddressEditor;
     private EditText uorganizationEditor;
     private EditText ucontactwayEditor;
     private TextView errorInfoView;
+    private Button wantEditView;
 
     private LinearLayout unameLayout;
     private LinearLayout uorganizationLayout;
@@ -44,6 +50,9 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        instance = this;
+
+        backBtn = (ImageView) findViewById(R.id.user_info_back_view);
         wantEditView = (Button) findViewById(R.id.user_info_want_edit);
         errorInfoView = (TextView) findViewById(R.id.user_info_error_info);
 
@@ -56,6 +65,15 @@ public class UserInfoActivity extends AppCompatActivity {
         uorganizationLayout = (LinearLayout) findViewById(R.id.user_info_uorganization_layout);
         ucontactwayLayout = (LinearLayout) findViewById(R.id.user_info_ucontactway_layout);
 
+        SharedPreferences sp = getSharedPreferences("UserInFo", MODE_PRIVATE);
+        uemailaddress = sp.getString("uemailaddress", "");
+
+        unameEditor.setText(sp.getString("uname", ""));
+        uemailaddressEditor.setText(sp.getString("uemailaddress", ""));
+        uorganizationEditor.setText(sp.getString("uorganization", ""));
+        ucontactwayEditor.setText(sp.getString("ucontactway", ""));
+
+        /*
         new Thread(){
             @Override
             public void run() { // 与服务器交互，获取相应个人信息
@@ -91,10 +109,16 @@ public class UserInfoActivity extends AppCompatActivity {
                 }
             }
         }.start();
+        */
     }
 
     private void initEvents() {
-
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserInfoActivity.this.finish();
+            }
+        });
 
         wantEditView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,12 +174,18 @@ public class UserInfoActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(UserInfoActivity.this, "保存成功", Toast.LENGTH_SHORT);
+                                            errorInfoView.setText("保存成功");
+
+                                            SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", MODE_PRIVATE).edit();
+                                            spEditor.putString("uname", unameEditor.getText().toString());
+                                            spEditor.putString("uorganization", uorganizationEditor.getText().toString());
+                                            spEditor.putString("ucontactway", ucontactwayEditor.getText().toString());
+                                            spEditor.commit();
 
                                             unameEditor.setFocusable(false);
                                             unameEditor.setFocusableInTouchMode(false);
                                             unameEditor.setCursorVisible(false);
-                                            unameEditor.setBackgroundResource(R.drawable.edit_text_false);
+                                            unameLayout.setBackgroundResource(R.drawable.edit_text_false);
 
 //                                    uemailaddressEditor.setFocusable(false);
 //                                    uemailaddressEditor.setFocusableInTouchMode(false);
@@ -164,12 +194,12 @@ public class UserInfoActivity extends AppCompatActivity {
                                             uorganizationEditor.setFocusable(false);
                                             uorganizationEditor.setFocusableInTouchMode(false);
                                             uorganizationEditor.setCursorVisible(false);
-                                            uorganizationEditor.setBackgroundResource(R.drawable.edit_text_false);
+                                            uorganizationLayout.setBackgroundResource(R.drawable.edit_text_false);
 
                                             ucontactwayEditor.setFocusable(false);
                                             ucontactwayEditor.setFocusableInTouchMode(false);
                                             ucontactwayEditor.setCursorVisible(false);
-                                            ucontactwayEditor.setBackgroundResource(R.drawable.edit_text_false);
+                                            ucontactwayLayout.setBackgroundResource(R.drawable.edit_text_false);
 
                                             wantEditView.setText("修改");
                                         }

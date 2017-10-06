@@ -8,17 +8,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class FeedBackActivity extends AppCompatActivity {
     private static final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWeb";
     private final String FEEDBACKSERVLET_URL_PATH = ROOT_URL_PATH + "/feedbackservlet";
     // view
+    private ImageView backView;
     private EditText feedInfoView;
     private TextView errorInfoView;
     private Button feedbackCommitBtn;
@@ -41,12 +45,20 @@ public class FeedBackActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        backView = (ImageView) findViewById(R.id.feedback_back_view);
         feedInfoView = (EditText) findViewById(R.id.feedback_info);
         feedbackCommitBtn = (Button) findViewById(R.id.feedback_commit);
         errorInfoView = (TextView) findViewById(R.id.feedback_error_info);
     }
 
     private void initEvents() {
+        backView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FeedBackActivity.this.finish();
+            }
+        });
+
         feedbackCommitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

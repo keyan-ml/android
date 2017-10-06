@@ -23,7 +23,7 @@ public class FirstWelcomeActivity extends AppCompatActivity {
                 super.run();
 
                 try {
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

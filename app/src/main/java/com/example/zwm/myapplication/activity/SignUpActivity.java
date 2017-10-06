@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
 
+import java.util.Date;
+
 public class SignUpActivity extends AppCompatActivity {
     public static Activity instance;
     // view
@@ -76,6 +78,10 @@ public class SignUpActivity extends AppCompatActivity {
                     upasswordconfirmed = upasswordConfirmedView.getText().toString();
                     uorganization = uorganizationView.getText().toString();
                     ucontactway = ucontactwayView.getText().toString();
+
+                    if (uname == null || uname.equals("")) {
+                        uname = "user" + String.valueOf(new Date().getTime());
+                    }
 
                     // 邮箱地址不能为空
                     String regEx = "[a-zA-Z_0-9]{1,}[0-9]{0,}@(([a-zA-z0-9]-*){1,}\\.){1,3}[a-zA-z\\-]{1,}";
@@ -138,19 +144,23 @@ public class SignUpActivity extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        uemailaddressView.setText("该邮箱已存在!");
-                                        uemailaddressView.setTextColor(Color.parseColor("#ff0000"));
+                                        errorInfoView.setText("该邮箱已存在!");
                                     }
                                 });
                             }
                             // 返回信息不是"failed"，即"success"，本次注册成功，随后跳转到功能界面
                             else {
+
+
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                                        spEditor.putString("uname", uname);
                                         spEditor.putString("uemailaddress", uemailaddress);
                                         spEditor.putString("upassword", upassword);
+                                        spEditor.putString("uorganization", uorganization);
+                                        spEditor.putString("ucontactway", ucontactway);
                                         spEditor.commit();
 
                                         Intent intent = new Intent();

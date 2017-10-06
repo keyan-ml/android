@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,8 +18,13 @@ import android.widget.TextView;
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
 
+import java.net.HttpRetryException;
+
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     public static Activity instance;
+
+    private static final String SIGN_IN_URL = "http://182.254.247.94:8080/KeyanWeb/signinservlet";
+    private static final String MODIFYUSERINFO_SERVLET_URL = "http://182.254.247.94:8080/KeyanWeb/modifyuserinfoservlet";
 
     // view
     private EditText uemailaddressView;
@@ -27,7 +35,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private TextView signUpView;
     // view
 
-    private static final String SIGN_IN_URL = "http://182.254.247.94:8080/KeyanWeb/signinservlet";
 
     private String uemailaddress;
     private String upassword;
@@ -98,45 +105,92 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     public void run() {
                         super.run();
 
-                        String postString = "uemailaddress=" + uemailaddress
-                                + "&upassword=" + upassword;
-                        resultFromPost = HttpUtils.post(SIGN_IN_URL, postString);
-                        Log.d("MyDebug", "[result]: " + resultFromPost);
-                        // 返回信息中有"failed"，为出错，具体错误需再次判断
-                        if (resultFromPost.contains("failed")) {
+                        try {
+                            String postString = "uemailaddress=" + uemailaddress
+                                    + "&upassword=" + upassword;
+                            resultFromPost = HttpUtils.post(SIGN_IN_URL, postString);
+                            Log.d("MyDebug", "[result]: " + resultFromPost);
+                            // 返回信息中有"failed"，为出错，具体错误需再次判断
+                            if (resultFromPost == null) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        errorInfoView.setText("网络连接错误！");
+                                        return;
+                                    }
+                                });
+                            }
+                            if (resultFromPost.contains("failed")) {
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
 //                                    String[] resultArr = resultFromPost.split("_");
-                                    if (resultFromPost.contains("emailaddress")) {
-                                        errorInfoView.setText("该邮箱未注册！");
-                                        return;
+                                        if (resultFromPost.contains("emailaddress")) {
+                                            errorInfoView.setText("该邮箱未注册！");
+                                            return;
+                                        }
+                                        if (resultFromPost.contains("password")) {
+                                            errorInfoView.setText("密码错误！");
+                                            return;
+                                        }
+
                                     }
-                                    if (resultFromPost.contains("password")) {
-                                        errorInfoView.setText("密码错误！");
-                                        return;
+                                });
+
+                            }
+                            // 返回信息中不含有"failed"字样，说明登录成功
+                            else {
+                                // 获取该邮箱所对应的个人信息
+                                postString = "postreason=get&uemailaddress=" + uemailaddress;
+                                resultFromPost = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
+                                Log.d("MyDebug", resultFromPost);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (resultFromPost.contains("failed")) { // 服务器mysql获取用户信息失败
+                                            errorInfoView.setText("网络有误！");
+                                            Log.d("MyDebug", "mysqling on server is failed");
+                                        }
+                                        else { // 获取成功，设置对应显示
+                                            final String[] userInfoArr = resultFromPost.split("\\|");
+                                            if (userInfoArr[0].contains("success")) { // 获取成功
+                                                SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                                                spEditor.putString("uname", userInfoArr[1]);
+                                                spEditor.putString("uemailaddress", uemailaddress);
+                                                spEditor.putString("upassword", upassword);
+                                                spEditor.putString("uorganization", userInfoArr[2]);
+                                                spEditor.putString("ucontactway", userInfoArr[3]);
+                                                spEditor.commit();
+
+                                                Intent intent = new Intent();
+                                                intent.setClass(SignInActivity.this, MainActivity.class);
+                                                startActivity(intent);
+
+                                            }
+                                            else {
+                                                errorInfoView.setText("网络有误！");
+                                            }
+                                        }
                                     }
+                                });
 
-                                }
-                            });
-
-                        }
-                        // 返回信息中不含有"failed"字样，说明登录成功
-                        else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
-                                    spEditor.putString("uemailaddress", uemailaddress);
-                                    spEditor.putString("upassword", upassword);
-                                    spEditor.commit();
-
-                                    Intent intent = new Intent();
-                                    intent.setClass(SignInActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                }
-                            });
+//                                runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+//                                        spEditor.putString("uemailaddress", uemailaddress);
+//                                        spEditor.putString("upassword", upassword);
+//                                        spEditor.commit();
+//
+//                                        Intent intent = new Intent();
+//                                        intent.setClass(SignInActivity.this, MainActivity.class);
+//                                        startActivity(intent);
+//                                    }
+//                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
 
                     }
@@ -154,4 +208,5 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
+
 }

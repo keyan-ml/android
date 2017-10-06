@@ -1,7 +1,9 @@
 package com.example.zwm.myapplication.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -91,6 +93,11 @@ public class UserFragment extends Fragment implements View.OnClickListener {
                     SignInActivity.instance.finish();
                     SignInActivity.instance = null;
                 }
+
+                SharedPreferences.Editor spEditor = getActivity().getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                spEditor.clear();
+                spEditor.commit();
+
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), SignInActivity.class);
                 startActivity(intent);
