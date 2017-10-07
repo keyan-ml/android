@@ -1,13 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OtherFragment"
-        android:textSize="20sp"/>
+        android:id="@+id/title_of_file_upload"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="(｀･ω･´)智能分析(´･ω･｀)"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:background="#ddd" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/file_upload_file_path"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:hint="请选择csv文件，完成后点击提交按钮"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:layout_weight="5"/>
+        <Button
+            android:id="@+id/file_upload_commit_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:text="提交"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#aaa"/>
+
+    <TextView
+        android:id="@+id/file_upload_error_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"/>
+
 
 </LinearLayout>
