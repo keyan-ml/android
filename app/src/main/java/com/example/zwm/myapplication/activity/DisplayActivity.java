@@ -41,6 +41,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout tabCDLayout;
     private LinearLayout tabPULayout;
     private LinearLayout tabTransELayout;
+    private LinearLayout cdLegendPos;
+    private LinearLayout cdLegendNeg;
     private LinearLayout cdContainerView;
 
     private TextView puErrorView;
@@ -52,17 +54,25 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout forceViewLayout;
     // view
 
+
     private ViewTreeObserver vto;
-//    private int textViewWidth;
 
     private LinearLayout.LayoutParams layoutParamsOfcdContainer;
     private LinearLayout.LayoutParams layoutParamsOfViewLayout;
 
-    private String inputText;
-    private String resultFromPU;
+    private int cdItemHeignt;
+    private List<TextView> cdTextViewList;
+    private HashMap<Integer, TextView> cdTextViewMap;
+    private String[] countArr;
     private String positionOfPos;
+    private String[] positionArr;
+    //    private List<TextView> cdShowList;
+
     private String forceVertexArr;
     private String forceArcArr;
+
+    private String inputText;
+    private String resultFromPU;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,10 +147,15 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         pieView = (WebView) tabPUView.findViewById(R.id.pie_web_view);
         forceView = (WebView) tabTransEView.findViewById(R.id.force_web_view);
 
+        cdLegendPos = (LinearLayout) tabCDView.findViewById(R.id.cd_legend_pos);
+        cdLegendNeg = (LinearLayout) tabCDView.findViewById(R.id.cd_legend_neg);
         cdContainerView = (LinearLayout) tabCDView.findViewById(R.id.container_of_cd);
         pieViewLayout = (LinearLayout) tabPUView.findViewById(R.id.pie_web_view_layout);
         forceViewLayout = (LinearLayout) tabTransEView.findViewById(R.id.force_web_view_layout);
         // 初始化View
+
+        cdTextViewMap = new HashMap<Integer, TextView>();
+        cdTextViewList = new ArrayList<TextView>();
     }
 
     private void initEvents() {
@@ -153,6 +168,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         tabCDLayout.setOnClickListener(this);
         tabPULayout.setOnClickListener(this);
         tabTransELayout.setOnClickListener(this);
+
+        cdLegendPos.setOnClickListener(this);
+        cdLegendNeg.setOnClickListener(this);
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -184,161 +202,169 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         try {
             if (resultFromPU != null && !resultFromPU.equals("null")) { // 处理成功且成功返回
                 String[] partArr = resultFromPU.split("\\|");
+                countArr = partArr[0].split(" ");
+                positionOfPos = partArr[1];
 
-                if (partArr.length > 1) {
-                    positionOfPos = partArr[1];
+                layoutParamsOfcdContainer = (LinearLayout.LayoutParams) cdContainerView.getLayoutParams();
+                /**
+                 * 将文本输入框中的文本分句,逐句处理。先按负例处理，跳过空句子，后由分析结果信息重新处理正例句子
+                 */
+                String[] sentArr = inputText.toString().split("[。！？]"); // 分句
+                for (int i = 0; i < sentArr.length; i++) {
+                    TextView tv = new TextView(DisplayActivity.this);
+                    tv.setWidth(layoutParamsOfcdContainer.width); // 宽度
+                    tv.setText(sentArr[i]); // 文本
+                    tv.setTextColor(Color.parseColor("#000000")); // 文本颜色
+                    tv.setTextSize(16f); // 文本字体大小
+                    tv.setBackgroundResource(R.drawable.neg_distribution_border); // 背景色
+                    cdTextViewList.add(tv);
 
-                    HashMap<Integer, TextView> textViewMapOfSents = new HashMap<Integer, TextView>();
-                    layoutParamsOfcdContainer = (LinearLayout.LayoutParams) cdContainerView.getLayoutParams();
-                    /**
-                     * 将文本输入框中的文本分句,逐句处理。先按负例处理，跳过空句子，后由分析结果信息重新处理正例句子
-                     */
-                    String[] sentArr = inputText.toString().split("[。！？]"); // 分句
-                    for (int i = 0; i < sentArr.length; i++) {
-                        if (!sentArr[i].equals("")) { // 跳过空句子
-                            TextView tv = new TextView(DisplayActivity.this);
-                            tv.setWidth(layoutParamsOfcdContainer.width); // 宽度
-                            tv.setText(sentArr[i]); // 文本
-                            tv.setTextColor(Color.parseColor("#000000")); // 文本颜色
-                            tv.setTextSize(16f); // 文本字体大小
-//                            tv.setBackgroundColor(Color.parseColor("#BFEFFF")); // 还没调试
-                            tv.setBackgroundResource(R.drawable.neg_distribution_border); // 背景色
-                            textViewMapOfSents.put(i, tv);
-                        }
-                    }
-                    if (!positionOfPos.equals("")) { // 有负面信息
-                        // 分类颜色标注
-                        String[] positionArr = positionOfPos.split(" ");
-
-                        /**
-                         * 对所有的正例句子重新处理，修改为正确的底色
-                         */
-                        for (int i = 0; i < positionArr.length; i++) {
-                            String text = sentArr[Integer.parseInt(positionArr[i])]; // 取出被分类为正例的一个句子文本
-                            if (!text.equals("")) { // 跳过空句子
-                                TextView tv = textViewMapOfSents.get(Integer.parseInt(positionArr[i]));
-                                tv.setBackgroundResource(R.drawable.pos_distribution_border);
-                                textViewMapOfSents.put(Integer.parseInt(positionArr[i]), tv);
-                            }
-                        }
-                    }
-
-                    // 调整句子的显示顺序
-                    Set<Integer> keySet = textViewMapOfSents.keySet();
-                    ArrayList<Integer> keyList = new ArrayList<Integer>(keySet);
-                    Collections.sort(keyList);
-                    for (int position : keyList) {
-                        cdContainerView.addView( textViewMapOfSents.get(position) );
-                    }
+//                        if (!sentArr[i].equals("")) { // 跳过空句子
+//                            TextView tv = new TextView(DisplayActivity.this);
+//                            tv.setWidth(layoutParamsOfcdContainer.width); // 宽度
+//                            tv.setText(sentArr[i]); // 文本
+//                            tv.setTextColor(Color.parseColor("#000000")); // 文本颜色
+//                            tv.setTextSize(16f); // 文本字体大小
+//                            tv.setBackgroundResource(R.drawable.neg_distribution_border); // 背景色
+//                            cdTextViewMap.put(i, tv);cdTextViewList
+//                        }
+                }
+                if (!positionOfPos.equals("")) { // 有负面信息
                     // 分类颜色标注
+                    positionArr = positionOfPos.split(" ");
 
                     /**
-                     * 饼图
+                     * 对所有的正例句子重新处理，修改为正确的底色
                      */
-                    final String[] countArr = partArr[0].split(" ");
-                    layoutParamsOfViewLayout = (LinearLayout.LayoutParams) pieViewLayout.getLayoutParams();
-                    // 增加整体布局监听
-                    vto = pieViewLayout.getViewTreeObserver();
-                    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            layoutParamsOfViewLayout.height = (int) (pieViewLayout.getWidth() * 1.2); // 通过整体布局监听，获得View宽度
-                        }
-                    });
-                    puErrorView.setHeight(0); // 隐藏错误信息显示区域
-                    pieViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数
-                    pieView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
-                    pieView.loadUrl("file:///android_asset/pie.html"); // 加载需要显示的网页
-                    //设置Web视图
-                    pieView.setWebViewClient(new WebViewClient() {
-                        @Override
-                        public void onPageFinished(WebView view, String url) {
-                            super.onPageFinished(view, url);
+                    for (int i = 0; i < positionArr.length; i++) {
+                        int index = Integer.parseInt(positionArr[i]);
+                        TextView tv = cdTextViewList.get(index);
+                        tv.setBackgroundResource(R.drawable.pos_distribution_border);
+                        cdTextViewList.remove(index);
+                        cdTextViewList.add(index, tv);
 
-                            //在这里执行你想调用的js函数
-                            pieView.post(new Runnable() {
-                                String callJs = "javascript:showpie([{value: " + countArr[0] + ",name: '负面', selected:false},{value: " + countArr[1] + ",name: '正面'}])";
-
-                                public void run() {
-                                    pieView.loadUrl(callJs); // 执行js语句
-                                }
-                            });
-                        }
-                    });
-                    // 饼图
-
-                    /**
-                     * 细粒度。需要向服务器发送TransE处理请求
-                     */
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
-
-                            // 请求参数
-                            String postString = "positions=" + positionOfPos
-                                    + "&sents=" + inputText;
-
-                            String result = HttpUtils.post(TRANSESERVLET_URL_PATH, postString); // 获取服务器返回信息
-                            String[] pairs = result.split("\\|");
-
-                            if (pairs[0].equals("ERROR")) { // 服务器处理出错
-                                transeErrorView.setText("没有符合条件的对象-属性元组!");
-                                Log.d("MyDebug", "[TransE] Error!");
-                                return;
-                            }
-                            else { // 处理成功
-                                String[] tempPairs = pairs[0].split(" ");
-                                forceVertexArr = "[{category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
-                                                "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
-                                forceArcArr = "[{source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
-                                for (int i = 1; i < pairs.length; i++) { // 先将头尾实体点信息及之间弧信息整理到两个数组中
-                                    tempPairs = pairs[i].split(" ");
-                                    forceVertexArr += ", {category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
-                                            "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
-                                    forceArcArr += ", {source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
-                                }
-                                forceVertexArr += "]";
-                                forceArcArr += "]";
-                            }
-                                Log.d("MyDebug", "组装完成：\nvertexArr: " + forceVertexArr + "\narcArr: " + forceArcArr);
-
-                            runOnUiThread(new Runnable() { // 在UI主线程中执行显示View的操作
-                                @Override
-                                public void run() {
-                                    transeErrorView.setHeight(0); // 隐藏错误信息显示区域
-
-                                    forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
-                                    forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
-                                    forceView.loadUrl("file:///android_asset/force.html"); // 加载需要显示的网页
-
-                                    forceView.setWebViewClient(new WebViewClient() {//设置Web视图
-                                        @Override
-                                        public void onPageFinished(WebView view, String url) {
-                                            super.onPageFinished(view, url);
-
-                                            // 在这里执行你想调用的js函数
-                                            forceView.post(new Runnable() {
-                                                String callJs = "javascript:showforce(" + forceVertexArr + ", " + forceArcArr + ")";
-
-                                                public void run() {
-                                                    forceView.loadUrl(callJs); // 执行js语句，显示force图
-                                                }
-                                            });
-                                        }
-
-                                    });
-                                }
-                            });
-
-                        }
-                    }.start();
-                    // 细粒度
-
-//                    }
+//                            String text = sentArr[Integer.parseInt(positionArr[i])]; // 取出被分类为正例的一个句子文本
+//                            if (!text.equals("")) { // 跳过空句子
+//                                TextView tv = cdTextViewMap.get(Integer.parseInt(positionArr[i]));
+//                                tv.setBackgroundResource(R.drawable.pos_distribution_border);
+//                                cdTextViewMap.put(Integer.parseInt(positionArr[i]), tv);
+//                            }
+                    }
                 }
 
+                showAllSents();
+//                    cdContainerView.removeAllViews();
+//                    // 调整句子的显示顺序
+//                    Set<Integer> keySet = cdTextViewMap.keySet();
+//                    ArrayList<Integer> keyList = new ArrayList<Integer>(keySet);
+//                    Collections.sort(keyList);
+//                    for (int position : keyList) {
+//                        cdContainerView.addView( cdTextViewMap.get(position) );
+//                    }
 
+                // 分类颜色标注
+
+                /**
+                 * 饼图
+                 */
+                layoutParamsOfViewLayout = (LinearLayout.LayoutParams) pieViewLayout.getLayoutParams();
+                // 增加整体布局监听
+                vto = pieViewLayout.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        layoutParamsOfViewLayout.height = (int) (pieViewLayout.getWidth() * 1.2); // 通过整体布局监听，获得View宽度
+                    }
+                });
+                puErrorView.setHeight(0); // 隐藏错误信息显示区域
+                pieViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数
+                pieView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
+                pieView.loadUrl("file:///android_asset/pie.html"); // 加载需要显示的网页
+                //设置Web视图
+                pieView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+
+                        //在这里执行你想调用的js函数
+                        pieView.post(new Runnable() {
+                            String callJs = "javascript:showpie([{value: " + countArr[0] + ",name: '负面', selected:false},{value: " + countArr[1] + ",name: '正面'}])";
+
+                            public void run() {
+                                pieView.loadUrl(callJs); // 执行js语句
+                            }
+                        });
+                    }
+                });
+                // 饼图
+
+                /**
+                 * 细粒度。需要向服务器发送TransE处理请求
+                 */
+                new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+
+                        // 请求参数
+                        String postString = "positions=" + positionOfPos
+                                + "&sents=" + inputText;
+
+                        String result = HttpUtils.post(TRANSESERVLET_URL_PATH, postString); // 获取服务器返回信息
+                        String[] pairs = result.split("\\|");
+
+                        if (pairs[0].equals("ERROR")) { // 服务器处理出错
+                            transeErrorView.setText("没有符合条件的对象-属性元组!");
+                            Log.d("MyDebug", "[TransE] Error!");
+                            return;
+                        }
+                        else { // 处理成功
+                            String[] tempPairs = pairs[0].split(" ");
+                            forceVertexArr = "[{category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
+                                            "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
+                            forceArcArr = "[{source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
+                            for (int i = 1; i < pairs.length; i++) { // 先将头尾实体点信息及之间弧信息整理到两个数组中
+                                tempPairs = pairs[i].split(" ");
+                                forceVertexArr += ", {category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
+                                        "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
+                                forceArcArr += ", {source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
+                            }
+                            forceVertexArr += "]";
+                            forceArcArr += "]";
+                        }
+                            Log.d("MyDebug", "组装完成：\nvertexArr: " + forceVertexArr + "\narcArr: " + forceArcArr);
+
+                        runOnUiThread(new Runnable() { // 在UI主线程中执行显示View的操作
+                            @Override
+                            public void run() {
+                                transeErrorView.setHeight(0); // 隐藏错误信息显示区域
+
+                                forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
+                                forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
+                                forceView.loadUrl("file:///android_asset/force.html"); // 加载需要显示的网页
+
+                                forceView.setWebViewClient(new WebViewClient() {//设置Web视图
+                                    @Override
+                                    public void onPageFinished(WebView view, String url) {
+                                        super.onPageFinished(view, url);
+
+                                        // 在这里执行你想调用的js函数
+                                        forceView.post(new Runnable() {
+                                            String callJs = "javascript:showforce(" + forceVertexArr + ", " + forceArcArr + ")";
+
+                                            public void run() {
+                                                forceView.loadUrl(callJs); // 执行js语句，显示force图
+                                            }
+                                        });
+                                    }
+
+                                });
+                            }
+                        });
+
+                    }
+                }.start();
+                // 细粒度
             }
             // 没有负面信息（吧）
             else {
@@ -369,6 +395,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.tab_transe:
                 tabTransELayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(2);
+                break;
+            case R.id.cd_legend_pos:
+
         }
     }
 
@@ -377,4 +406,25 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         tabPULayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
         tabTransELayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
     }
+
+    private void showAllSents() {
+        cdContainerView.removeAllViews();
+        // 调整句子的显示顺序
+        for (int i = 0; i < cdTextViewList.size(); i++) {
+            TextView tv = cdTextViewList.get(i);
+            if (!tv.getText().equals("")) {
+                cdContainerView.addView(tv);
+            }
+        }
+    }
+
+//    private void showPos() {
+//        if (countArr[0].trim().equals("0")) { // 没有负面，移除所有View级就行了
+//
+//        }
+//    }
+//
+//    private void showNeg() {
+//
+//    }
 }

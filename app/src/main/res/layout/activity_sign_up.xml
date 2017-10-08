@@ -102,7 +102,7 @@
                         android:layout_height="55dp"
                         android:paddingLeft="10dp"
                         android:background="@drawable/edit_text_bg"
-                        android:hint="email@example.com"
+                        android:hint="登录邮箱"
                         android:inputType="text"
                         android:maxLength="44" />
                 </LinearLayout>
@@ -133,7 +133,7 @@
                         android:layout_height="55dp"
                         android:paddingLeft="10dp"
                         android:background="@drawable/edit_text_bg"
-                        android:hint="允许长度为6-12位"
+                        android:hint="密码（建议6-12位）"
                         android:inputType="textPassword"
                         android:maxLength="12" />
                 </LinearLayout>
@@ -164,7 +164,7 @@
                         android:layout_height="55dp"
                         android:paddingLeft="10dp"
                         android:background="@drawable/edit_text_bg"
-                        android:hint="允许长度为6-12位"
+                        android:hint="再次输入密码"
                         android:inputType="textPassword"
                         android:maxLength="12" />
                 </LinearLayout>
