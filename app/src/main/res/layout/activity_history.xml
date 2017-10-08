@@ -34,6 +34,14 @@
         android:layout_height="1dp"
         android:background="#aaa"/>
 
+    <TextView
+        android:id="@+id/history_none_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:text="没有任何记录"
+        android:paddingLeft="15dp"/>
+
     <ListView
         android:id="@+id/history_list_view"
         android:layout_width="match_parent"

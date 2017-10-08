@@ -2,12 +2,100 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.zwm.myapplication.fragment.HelpFragment">
+    android:background="#eee">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/top_bar_of_help"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="#fff">
+            <ImageView
+                android:id="@+id/help_back_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:paddingRight="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@mipmap/left_arrow"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:text="关于和帮助"
+                android:textColor="#000"
+                android:textSize="22sp"
+                android:layout_centerInParent="true"
+                android:gravity="center"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@mipmap/app_icon_1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="@string/app_name"
+            android:textColor="#000"
+            android:gravity="bottom|center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:text="版本号 v1.0"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="8"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="联系我们："
+                android:layout_marginBottom="10sp"
+                android:textSize="16sp"
+                android:textColor="#000"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="邮箱：1210500550@qq.com"
+                android:layout_marginLeft="20sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="电话：18435187125"
+                android:layout_marginLeft="20sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20sp"
+                android:text="地址：山西省太原市小店区坞城路92号山西大学"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

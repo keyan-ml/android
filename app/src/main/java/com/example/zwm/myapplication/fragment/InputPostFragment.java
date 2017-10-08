@@ -39,6 +39,7 @@ public class InputPostFragment extends Fragment {
     private TextView errorInfoView;
     private Button commitButton;
 
+    private String inputText;
     private String postInfo;
     private String resultFromPU;
     private LinearLayout linearLayoutOfCD;
@@ -58,7 +59,6 @@ public class InputPostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_input_post, container, false);
     }
 
@@ -71,27 +71,17 @@ public class InputPostFragment extends Fragment {
     }
 
     private void initEvents(final FragmentActivity activity) {
-//        inputText.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                // 触摸的是EditText并且当前EditText可以滚动则将事件交给EditText处理；否则将事件交由其父类处理
-//                if ((view.getId() == R.id.m_input_text && canVerticalScroll(inputText))) {
-//                    view.getParent().requestDisallowInterceptTouchEvent(true);
-//                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-//                        view.getParent().requestDisallowInterceptTouchEvent(false);
-//                    }
-//                }
-//                return false;
-//            }
-//        });
-
-
         commitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 try {
-                    postInfo = "sents=" + inputTextView.getText().toString();
+                    inputText = inputTextView.getText().toString();
+                    if (inputText.equals("")) { // 输入为空
+                        errorInfoView.setText("请输入文本！");
+                        return;
+                    }
+                    postInfo = "sents=" + inputText;
                     SharedPreferences.Editor spEditor = activity.getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
                     spEditor.putString("inputtext", inputTextView.getText().toString()); // 保存当前用户最近一次输入的分析文本
                     spEditor.commit();
@@ -109,7 +99,6 @@ public class InputPostFragment extends Fragment {
                                     SharedPreferences sp = activity.getSharedPreferences("UserInFo", Context.MODE_PRIVATE);
                                     SQLiteDatabase db = dbHelper.getReadableDatabase();
                                     String sql = "insert into input_text values(null, ?, ?, ?);";
-//                                    String inputdatetime = new SimpleDateFormat(DATETIME_FORMAT).format(new Date());
                                     db.execSQL(sql, new Object[]{
                                                         sp.getString("uemailaddress", ""),
                                                         inputTextView.getText().toString(),
@@ -155,21 +144,4 @@ public class InputPostFragment extends Fragment {
             }
         });
     }
-
-//    private boolean canVerticalScroll(EditText editText) {
-//        //滚动的距离
-//        int scrollY = editText.getScrollY();
-//        //控件内容的总高度
-//        int scrollRange = editText.getLayout().getHeight();
-//        //控件实际显示的高度
-//        int scrollExtent = editText.getHeight() - editText.getCompoundPaddingTop() -editText.getCompoundPaddingBottom();
-//        //控件内容总高度与实际显示高度的差值
-//        int scrollDifference = scrollRange - scrollExtent;
-//
-//        if(scrollDifference == 0) {
-//            return false;
-//        }
-//
-//        return (scrollY > 0) || (scrollY < scrollDifference - 1);
-//    }
 }

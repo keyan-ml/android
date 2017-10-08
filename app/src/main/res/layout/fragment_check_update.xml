@@ -2,12 +2,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.zwm.myapplication.fragment.CheckUpdateFragment">
+    android:background="#eee">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/top_bar_of_check_update"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="#fff">
+            <ImageView
+                android:id="@+id/check_update_back_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:paddingRight="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@mipmap/left_arrow"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:text="检查更新"
+                android:textColor="#000"
+                android:textSize="22sp"
+                android:layout_centerInParent="true"
+                android:gravity="center"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="版本号 1.0"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/check_update_show_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="正在查询最新版本..."
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:gravity="center"/>
+
+    </LinearLayout>
 
 </FrameLayout>

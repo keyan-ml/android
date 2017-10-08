@@ -13,9 +13,6 @@ public class InputTextDBHelper extends SQLiteOpenHelper {
     private static final String name = "android_db"; // 数据库名称
     private static final int version = 1; // 数据库版本
 
-//    public InputTextDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-//        super(context, name, factory, version);
-//    }
     public InputTextDBHelper(Context context) {
         super(context, name, null, version);
     }

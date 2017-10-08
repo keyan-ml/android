@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
@@ -21,6 +21,7 @@ import java.util.Date;
 public class SignUpActivity extends AppCompatActivity {
     public static Activity instance;
     // view
+    private ImageView backView;
     private EditText unameView;
     private EditText uemailaddressView;
     private EditText upasswordView;
@@ -52,6 +53,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void initViews() {
         instance = this;
 
+        backView = (ImageView) findViewById(R.id.sign_up_back_view);
         unameView = (EditText) findViewById(R.id.sign_up_uname);
         uemailaddressView = (EditText) findViewById(R.id.sign_up_uemailaddress);
         upasswordView = (EditText) findViewById(R.id.sign_up_upassword);
@@ -63,9 +65,12 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initEvents() {
-//        if (SignInActivity.instance != null) {
-//            SignInActivity.instance.finish(); // 结束登录界面activity
-//        }
+        backView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
                     ucontactway = ucontactwayView.getText().toString();
 
                     if (uname == null || uname.equals("")) {
-                        uname = "user" + String.valueOf(new Date().getTime());
+                        uname = "User" + String.valueOf(new Date().getTime());
                     }
 
                     // 邮箱地址不能为空
@@ -150,8 +155,6 @@ public class SignUpActivity extends AppCompatActivity {
                             }
                             // 返回信息不是"failed"，即"success"，本次注册成功，随后跳转到功能界面
                             else {
-
-
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -161,6 +164,10 @@ public class SignUpActivity extends AppCompatActivity {
                                         spEditor.putString("upassword", upassword);
                                         spEditor.putString("uorganization", uorganization);
                                         spEditor.putString("ucontactway", ucontactway);
+                                        spEditor.commit();
+
+                                        spEditor = getSharedPreferences("Path", Context.MODE_PRIVATE).edit();
+                                        spEditor.putString("DefaultStoragePath", "/storage/emulated/0/_ml-NLP");
                                         spEditor.commit();
 
                                         Intent intent = new Intent();

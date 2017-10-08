@@ -32,9 +32,6 @@
             android:name=".activity.FeedBackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.TestActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.UserInfoActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -46,9 +43,15 @@
         <activity
             android:name=".activity.ModifyPasswordActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.SettingsActivity" />
-        <activity android:name=".activity.HistoryActivity" />
-        <activity android:name=".activity.SettingsFragmentsActivity"></activity>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.HistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SettingsFragmentsActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

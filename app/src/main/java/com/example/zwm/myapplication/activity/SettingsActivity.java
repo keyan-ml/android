@@ -9,17 +9,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.zwm.myapplication.R;
-import com.example.zwm.myapplication.fragment.CheckUpdateFragment;
-import com.example.zwm.myapplication.fragment.ClearSpaceFragment;
-import com.example.zwm.myapplication.fragment.HelpFragment;
-import com.example.zwm.myapplication.fragment.MakeDarkFragment;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
     public static Activity instance;
 
     private ImageView backBtn;
     private LinearLayout modifyPasswordView;
-    private LinearLayout makeDarkView;
+    private LinearLayout defaultStorageView;
     private LinearLayout clearSpaceView;
     private LinearLayout checkUpdateView;
     private LinearLayout helpView;
@@ -38,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         backBtn = (ImageView) findViewById(R.id.settings_back_view);
         modifyPasswordView = (LinearLayout) findViewById(R.id.settings_modify_password);
-        makeDarkView = (LinearLayout) findViewById(R.id.settings_make_dark);
+        defaultStorageView = (LinearLayout) findViewById(R.id.settings_default_storage);
         clearSpaceView = (LinearLayout) findViewById(R.id.settings_clear_space_db);
         checkUpdateView = (LinearLayout) findViewById(R.id.settings_check_update);
         helpView = (LinearLayout) findViewById(R.id.settings_help);
@@ -47,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     private void initEvents() {
         backBtn.setOnClickListener(this);
         modifyPasswordView.setOnClickListener(this);
-        makeDarkView.setOnClickListener(this);
+        defaultStorageView.setOnClickListener(this);
         clearSpaceView.setOnClickListener(this);
         checkUpdateView.setOnClickListener(this);
         helpView.setOnClickListener(this);
@@ -65,10 +61,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 intent.setClass(this, ModifyPasswordActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.settings_make_dark:
+            case R.id.settings_default_storage:
                 ModifyPasswordActivity.isComingFromSettings = true;
                 intent.setClass(this, SettingsFragmentsActivity.class);
-                intent.putExtra("FragmentId", "MakeDarkFragment");
+                intent.putExtra("FragmentId", "DefaultStorageFragment");
                 startActivity(intent);
                 break;
             case R.id.settings_clear_space_db:

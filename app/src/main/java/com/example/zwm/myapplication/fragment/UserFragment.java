@@ -41,6 +41,12 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     private Button signOutBtn;
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_user, container, false);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -50,12 +56,12 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         initEvents(activity);
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user, container, false);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        SharedPreferences sp = getActivity().getSharedPreferences("UserInFo", Context.MODE_PRIVATE);
+        unameView.setText(sp.getString("uname", "用户名"));
     }
 
     private void initViews(FragmentActivity activity) {
@@ -72,8 +78,8 @@ public class UserFragment extends Fragment implements View.OnClickListener {
 
     private void  initEvents(FragmentActivity activity) {
         SharedPreferences sp = activity.getSharedPreferences("UserInFo", Context.MODE_PRIVATE);
-        unameView.setText(sp.getString("uname", ""));
-        uemailaddressView.setText(sp.getString("uemailaddress", ""));
+        unameView.setText(sp.getString("uname", "用户名"));
+        uemailaddressView.setText(sp.getString("uemailaddress", "邮箱"));
 
         historyView.setOnClickListener(this);
         userInfoView.setOnClickListener(this);
@@ -94,7 +100,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
             case R.id.user_user_info:
                 Log.d("MyDebug", "click user_user_info");
                 intent.setClass(getActivity(), UserInfoActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 break;
             case R.id.user_feedback:
                 Log.d("MyDebug", "click user_feedback");

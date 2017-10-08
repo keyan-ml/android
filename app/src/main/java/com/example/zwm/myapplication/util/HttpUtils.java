@@ -9,11 +9,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * 进行http请求工具包
- * Created by CN on 2017/8/19.
- */
-
 public class HttpUtils {
 
     /**

@@ -1,7 +1,6 @@
 package com.example.zwm.myapplication.activity;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -72,44 +71,6 @@ public class UserInfoActivity extends AppCompatActivity {
         uemailaddressEditor.setText(sp.getString("uemailaddress", ""));
         uorganizationEditor.setText(sp.getString("uorganization", ""));
         ucontactwayEditor.setText(sp.getString("ucontactway", ""));
-
-        /*
-        new Thread(){
-            @Override
-            public void run() { // 与服务器交互，获取相应个人信息
-                super.run();
-
-                try {
-                    SharedPreferences sp = getSharedPreferences("UserInFo", MODE_PRIVATE);
-                    uemailaddress = sp.getString("uemailaddress", "");
-
-                    postString = "postreason=get&uemailaddress=" + uemailaddress;
-                    result = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
-                    Log.d("MyDebug", result);
-                    final String[] userInfoArr = result.split("\\|");
-                    if (result.contains("failed")) { // 服务器mysql获取用户信息失败
-                        Log.d("MyDebug", "mysqling on server is failed");
-                    }
-                    else { // 获取成功，设置对应显示
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (userInfoArr[0].contains("success")) { // 获取成功
-                                    unameEditor.setText(userInfoArr[1]);
-                                    uemailaddressEditor.setText(uemailaddress);
-                                    uorganizationEditor.setText(userInfoArr[2]);
-                                    ucontactwayEditor.setText(userInfoArr[3]);
-                                }
-                            }
-                        });
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(MainActivity.instance, "无法连接服务器", Toast.LENGTH_SHORT);
-                }
-            }
-        }.start();
-        */
     }
 
     private void initEvents() {
@@ -130,10 +91,6 @@ public class UserInfoActivity extends AppCompatActivity {
                     unameEditor.setFocusableInTouchMode(true);
                     unameEditor.setCursorVisible(true);
                     unameLayout.setBackgroundResource(R.drawable.border_drawer);
-
-//                    uemailaddressEditor.setFocusable(true);
-//                    uemailaddressEditor.setFocusableInTouchMode(true);
-//                    uemailaddressEditor.setCursorVisible(true);
 
                     uorganizationEditor.setFocusable(true);
                     uorganizationEditor.setFocusableInTouchMode(true);
@@ -164,10 +121,8 @@ public class UserInfoActivity extends AppCompatActivity {
                                         +"&ucontactway=" + new String(ucontactwayEditor.getText().toString().getBytes(), "UTF-8");
                                 result = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
                                 Log.d("MyDebug", result);
-//                                final String[] userInfoArr = result.split("\\|");
                                 if (result.contains("failed")) { // 服务器mysql获取用户信息失败
                                     Log.d("MyDebug", "mysqling on server is failed");
-//                                    Toast.makeText(getParent(), "服务器出错", Toast.LENGTH_SHORT);
                                     errorInfoView.setText("保存失败（服务器出错）");
                                 }
                                 else { // 修改成功，界面重回不可编辑状态
@@ -186,10 +141,6 @@ public class UserInfoActivity extends AppCompatActivity {
                                             unameEditor.setFocusableInTouchMode(false);
                                             unameEditor.setCursorVisible(false);
                                             unameLayout.setBackgroundResource(R.drawable.edit_text_false);
-
-//                                    uemailaddressEditor.setFocusable(false);
-//                                    uemailaddressEditor.setFocusableInTouchMode(false);
-//                                    uemailaddressEditor.setCursorVisible(false);
 
                                             uorganizationEditor.setFocusable(false);
                                             uorganizationEditor.setFocusableInTouchMode(false);

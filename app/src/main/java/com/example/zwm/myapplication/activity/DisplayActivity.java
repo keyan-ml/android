@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,10 +37,15 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private PagerAdapter pagerAdapter;
 
     // view
+    private ImageView backView;
     private LinearLayout tabCDLayout;
     private LinearLayout tabPULayout;
     private LinearLayout tabTransELayout;
     private LinearLayout cdContainerView;
+
+    private TextView puErrorView;
+    private TextView transeErrorView;
+
     private WebView pieView;
     private WebView forceView;
     private LinearLayout pieViewLayout;
@@ -74,6 +80,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         inputText = intent.getStringExtra("inputText");
         resultFromPU = intent.getStringExtra("resultFromPU");
         // 获取参数
+
+        backView = (ImageView) findViewById(R.id.display_back_view);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabCDLayout = (LinearLayout) findViewById(R.id.tab_cd);
@@ -123,6 +131,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         // 初始化View
+        puErrorView = (TextView) tabPUView.findViewById(R.id.pu_error_info);
+        transeErrorView = (TextView) tabTransEView.findViewById(R.id.transe_error_info);
+
         pieView = (WebView) tabPUView.findViewById(R.id.pie_web_view);
         forceView = (WebView) tabTransEView.findViewById(R.id.force_web_view);
 
@@ -135,6 +146,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private void initEvents() {
 //        // 去掉分类标注部分的所有（上次）记录
 //        cdContainerView.removeAllViewsInLayout();
+        backView.setOnClickListener(this);
+
         tabCDLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
 
         tabCDLayout.setOnClickListener(this);
@@ -144,7 +157,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                //
             }
 
             @Override
@@ -164,22 +177,18 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                //
             }
         });
 
-        if (resultFromPU != null) { // 什么情况？？
-            String[] partArr = resultFromPU.split("\\|");
+        try {
+            if (resultFromPU != null && !resultFromPU.equals("null")) { // 处理成功且成功返回
+                String[] partArr = resultFromPU.split("\\|");
 
-            // 有负面信息
-            if (partArr.length > 1) { // 该判断好像是多余的
-                positionOfPos = partArr[1];
+                if (partArr.length > 1) {
+                    positionOfPos = partArr[1];
 
-                if (!positionOfPos.equals("")) {
-                    // 分类颜色标注
-                    String[] positionArr = positionOfPos.split(" ");
                     HashMap<Integer, TextView> textViewMapOfSents = new HashMap<Integer, TextView>();
-
                     layoutParamsOfcdContainer = (LinearLayout.LayoutParams) cdContainerView.getLayoutParams();
                     /**
                      * 将文本输入框中的文本分句,逐句处理。先按负例处理，跳过空句子，后由分析结果信息重新处理正例句子
@@ -197,19 +206,22 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                             textViewMapOfSents.put(i, tv);
                         }
                     }
+                    if (!positionOfPos.equals("")) { // 有负面信息
+                        // 分类颜色标注
+                        String[] positionArr = positionOfPos.split(" ");
 
-                    /**
-                     * 对所有的正例句子重新处理，修改为正确的底色
-                     */
-                    for (int i = 0; i < positionArr.length; i++) {
-                        String text = sentArr[ Integer.parseInt(positionArr[i]) ]; // 取出被分类为正例的一个句子文本
-                        if (!text.equals("")) { // 跳过空句子
-                            TextView tv = textViewMapOfSents.get( Integer.parseInt(positionArr[i]) );
-                            tv.setBackgroundResource(R.drawable.pos_distribution_border);
-                            textViewMapOfSents.put( Integer.parseInt(positionArr[i]), tv );
+                        /**
+                         * 对所有的正例句子重新处理，修改为正确的底色
+                         */
+                        for (int i = 0; i < positionArr.length; i++) {
+                            String text = sentArr[Integer.parseInt(positionArr[i])]; // 取出被分类为正例的一个句子文本
+                            if (!text.equals("")) { // 跳过空句子
+                                TextView tv = textViewMapOfSents.get(Integer.parseInt(positionArr[i]));
+                                tv.setBackgroundResource(R.drawable.pos_distribution_border);
+                                textViewMapOfSents.put(Integer.parseInt(positionArr[i]), tv);
+                            }
                         }
                     }
-                    // 对所有的正例句子重新处理，修改为正确的底色
 
                     // 调整句子的显示顺序
                     Set<Integer> keySet = textViewMapOfSents.keySet();
@@ -218,9 +230,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                     for (int position : keyList) {
                         cdContainerView.addView( textViewMapOfSents.get(position) );
                     }
-                    // 调整句子的显示顺序
                     // 分类颜色标注
-
 
                     /**
                      * 饼图
@@ -233,11 +243,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void onGlobalLayout() {
                             layoutParamsOfViewLayout.height = (int) (pieViewLayout.getWidth() * 1.2); // 通过整体布局监听，获得View宽度
-
-//                            Log.d("MyDebug", "width: " + pieViewLayout.getWidth() + ", height: " + pieViewLayout.getHeight());
                         }
                     });
-
+                    puErrorView.setHeight(0); // 隐藏错误信息显示区域
                     pieViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数
                     pieView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
                     pieView.loadUrl("file:///android_asset/pie.html"); // 加载需要显示的网页
@@ -256,7 +264,6 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                                 }
                             });
                         }
-
                     });
                     // 饼图
 
@@ -276,47 +283,31 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                             String[] pairs = result.split("\\|");
 
                             if (pairs[0].equals("ERROR")) { // 服务器处理出错
+                                transeErrorView.setText("没有符合条件的对象-属性元组!");
                                 Log.d("MyDebug", "[TransE] Error!");
                                 return;
                             }
                             else { // 处理成功
-                                String[] vertexArr = new String[2 * pairs.length];
-                                String[] arcArr = new String[pairs.length];
-                                for (int i = 0; i < pairs.length; i++) { // 先将头尾实体点信息及之间弧信息整理到两个数组中
-                                    String[] tempPairs = pairs[i].split(" ");
-                                    vertexArr[2 * i] = "{category: 0, "
-                                                    + "name: \'" + tempPairs[0] + "\', "
-                                                    + "value: 20}";
-                                    vertexArr[2 * i + 1] = "{category: 1, "
-                                                        + "name: \'" + tempPairs[1] + "\', "
-                                                        + "value: 20}";
-                                    if (i == 0) {
-                                        arcArr[i] = "{source: \'" + tempPairs[0] + "\', "
-                                                + "target: \'" + tempPairs[1] + "\', "
-                                                + "weight: 5}";
-                                    }
-                                    else {
-                                        arcArr[i] = "{source: \'" + tempPairs[0] + "\', "
-                                                + "target: \'" + tempPairs[1] + "\', "
-                                                + "weight: 1}";
-                                    }
-                                }
-                                forceVertexArr = "[" + vertexArr[0]; // 组装实体点信息
-                                for (int i = 1; i < vertexArr.length; i++) {
-                                    forceVertexArr += ", " + vertexArr[i];
+                                String[] tempPairs = pairs[0].split(" ");
+                                forceVertexArr = "[{category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
+                                                "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
+                                forceArcArr = "[{source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
+                                for (int i = 1; i < pairs.length; i++) { // 先将头尾实体点信息及之间弧信息整理到两个数组中
+                                    tempPairs = pairs[i].split(" ");
+                                    forceVertexArr += ", {category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
+                                            "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
+                                    forceArcArr += ", {source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
                                 }
                                 forceVertexArr += "]";
-                                forceArcArr = "[" + arcArr[0]; // 组装实体弧信息
-                                for (int i = 1; i < arcArr.length; i++) {
-                                    forceArcArr += ", " + arcArr[i];
-                                }
                                 forceArcArr += "]";
-//                                Log.d("MyDebug", "vertexArr: " + forceVertexArr + "\narcArr: " + forceArcArr);
                             }
+                                Log.d("MyDebug", "组装完成：\nvertexArr: " + forceVertexArr + "\narcArr: " + forceArcArr);
 
                             runOnUiThread(new Runnable() { // 在UI主线程中执行显示View的操作
                                 @Override
                                 public void run() {
+                                    transeErrorView.setHeight(0); // 隐藏错误信息显示区域
+
                                     forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
                                     forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
                                     forceView.loadUrl("file:///android_asset/force.html"); // 加载需要显示的网页
@@ -344,14 +335,19 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                     }.start();
                     // 细粒度
 
+//                    }
                 }
+
+
             }
-
-
-        }
-        // 没有负面信息（吧）
-        else {
+            // 没有负面信息（吧）
+            else {
+                //
+            }
+        } catch (Exception e) {
             //
+            Log.d("MyDebug", "网络有误！");
+            e.printStackTrace();
         }
     }
 
@@ -359,6 +355,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         resetImage();
         switch (view.getId()) {
+            case R.id.display_back_view:
+                finish();
+                break;
             case R.id.tab_cd:
                 tabCDLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(0);

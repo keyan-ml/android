@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#eee">
 
 
     <RelativeLayout
@@ -30,22 +31,12 @@
             android:gravity="center"/>
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#aaa"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#fff"
         android:layout_marginTop="20dp"
         android:orientation="vertical">
-
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="#aaaaaa"/>-->
 
         <LinearLayout
             android:id="@+id/settings_modify_password"
@@ -72,34 +63,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#aaaaaa"/>
-
-        <LinearLayout
-            android:id="@+id/settings_make_dark"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="夜间模式"
-                android:textColor="#000"
-                android:textSize="20sp"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"/>
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:src="@mipmap/right_arrow"
-                android:paddingLeft="20dp"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#aaaaaa"/>
+            android:background="#eee"/>
 
         <LinearLayout
             android:id="@+id/settings_clear_space_db"
@@ -126,7 +90,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#aaaaaa"/>
+            android:background="#eee"/>
 
         <LinearLayout
             android:id="@+id/settings_check_update"
@@ -153,7 +117,34 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#aaaaaa"/>
+            android:background="#eee"/>
+
+        <LinearLayout
+            android:id="@+id/settings_default_storage"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="默认保存路径"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"/>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/right_arrow"
+                android:paddingLeft="20dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#eee"/>
 
         <LinearLayout
             android:id="@+id/settings_help"
@@ -176,11 +167,6 @@
                 android:paddingLeft="20dp"/>
 
         </LinearLayout>
-
-        <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="#aaaaaa"/>-->
 
     </LinearLayout>
 

@@ -4,16 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
@@ -31,6 +30,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private EditText upasswordView;
     private TextView errorInfoView;
     private Button signInButton;
+
     private TextView modifyPasswordView;
     private TextView signUpView;
     // view
@@ -40,7 +40,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private String upassword;
 
     private String resultFromPost;
-
+    private long pressTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void initViews() {
         instance = this;
+        pressTime = 0;
 
         if (FirstWelcomeActivity.instance != null) {
             FirstWelcomeActivity.instance.finish();
@@ -61,10 +62,17 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         uemailaddressView = (EditText) findViewById(R.id.sign_in_uemailaddress);
         upasswordView = (EditText) findViewById(R.id.sign_in_upassword);
+
         errorInfoView = (TextView) findViewById(R.id.sign_in_error_info);
         signInButton = (Button) findViewById(R.id.sign_in_button);
         modifyPasswordView = (TextView) findViewById(R.id.sign_in_forget_password);
         signUpView = (TextView) findViewById(R.id.sign_in_go_sign_up);
+
+        SharedPreferences sp = getSharedPreferences("User", MODE_PRIVATE);
+        String lastUemailaddress = sp.getString("LastUemailaddress", null);
+        if (lastUemailaddress != null) {
+            uemailaddressView.setText(lastUemailaddress);
+        }
     }
 
     private void initEvents() {
@@ -81,28 +89,23 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 uemailaddress = uemailaddressView.getText().toString();
                 upassword = upasswordView.getText().toString();
 
-                // 邮箱地址不能为空
-                String regEx = "[a-zA-Z_0-9]{1,}[0-9]{0,}@(([a-zA-z0-9]-*){1,}\\.){1,3}[a-zA-z\\-]{1,}";
-                if (uemailaddress.equals("")) {
+                if (uemailaddress.equals("")) { // 邮箱地址不能为空
                     errorInfoView.setText("邮箱地址不能为空!");
                     return;
                 }
-                // 邮箱地址不符合规则
-                else if (!uemailaddress.matches(regEx)) {
+                String regEx = "[a-zA-Z_0-9]{1,}[0-9]{0,}@(([a-zA-z0-9]-*){1,}\\.){1,3}[a-zA-z\\-]{1,}";
+                if (!uemailaddress.matches(regEx)) { // 邮箱地址不符合规则
                     errorInfoView.setText("邮箱地址格式不正确!");
                     return;
                 }
-
-                // 密码不能为空
-                if (upassword.equals("")) {
+                if (upassword.equals("")) { // 密码不能为空
                     errorInfoView.setText("密码不能为空!");
                     return;
                 }
 
-                // 合法邮箱和密码，准备登录检测
                 new Thread(){
                     @Override
-                    public void run() {
+                    public void run() { // 合法邮箱和密码，准备登录检测
                         super.run();
 
                         try {
@@ -125,7 +128,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-//                                    String[] resultArr = resultFromPost.split("_");
                                         if (resultFromPost.contains("emailaddress")) {
                                             errorInfoView.setText("该邮箱未注册！");
                                             return;
@@ -174,20 +176,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                         }
                                     }
                                 });
-
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
-//                                        spEditor.putString("uemailaddress", uemailaddress);
-//                                        spEditor.putString("upassword", upassword);
-//                                        spEditor.commit();
-//
-//                                        Intent intent = new Intent();
-//                                        intent.setClass(SignInActivity.this, MainActivity.class);
-//                                        startActivity(intent);
-//                                    }
-//                                });
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -209,4 +197,21 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - pressTime > 2000) {
+                Toast.makeText(SignInActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                pressTime = System.currentTimeMillis();
+                return true;
+            }
+            else { // 2秒内点击了两次
+                SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", MODE_PRIVATE).edit();
+                spEditor.clear();
+                finish();
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 }

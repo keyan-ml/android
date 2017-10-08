@@ -2,13 +2,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/sign_up_bg"
+    android:background="#eee"
     tools:context="com.example.zwm.myapplication.fragment.SignUpFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/top_bar_of_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="#fff">
+            <ImageView
+                android:id="@+id/sign_up_back_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:paddingRight="20dp"
+                android:layout_alignParentLeft="true"
+                android:src="@mipmap/left_arrow"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:text="欢迎新用户"
+                android:textColor="#000"
+                android:textSize="22sp"
+                android:layout_centerInParent="true"
+                android:gravity="center"/>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -61,11 +84,6 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!--<TextView-->
-                        <!--android:layout_width="50dp"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:gravity="center"-->
-                        <!--android:text="邮箱" />-->
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="55dp"
@@ -226,7 +244,7 @@
                 <Button
                     android:id="@+id/sign_up_button"
                     android:layout_width="match_parent"
-                    android:layout_height="55dp"
+                    android:layout_height="50dp"
                     android:background="@drawable/button_selector"
                     android:text="注册"
                     android:textColor="@color/colorButtonText"

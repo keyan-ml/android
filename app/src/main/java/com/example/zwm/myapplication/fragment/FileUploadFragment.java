@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,8 +27,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by zwm on 2017/10/4.
@@ -46,6 +45,8 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
     private String fileContent;
     private String filePath;
 
+    private boolean truePath;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +56,7 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_other, container, false);
+        return inflater.inflate(R.layout.fragment_file_upload, container, false);
     }
 
     @Override
@@ -78,7 +78,15 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        filePathView.setText(filePath.substring(19, filePath.length()));
+                        if (filePath.endsWith(".csv")) { // 选择了csv文件
+                            truePath = true;
+                            filePathView.setText(filePath.substring(19, filePath.length()));
+                        }
+                        else { // 选择的不是csv文件
+                            filePathView.setText("请选择csv文件！");
+                            truePath = false;
+                        }
+
                     }
                 });
                 Log.d("MyDebug",  "uri：" + uri + "\n路径：" + filePath);
@@ -87,6 +95,8 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
     }
 
     private void initViews(FragmentActivity activity) {
+        truePath = false;
+
         filePathView = (TextView) activity.findViewById(R.id.file_upload_file_path);
         commitButton = (Button) activity.findViewById(R.id.file_upload_commit_button);
 
@@ -109,19 +119,21 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
                 try {
                     startActivityForResult(intent, 1);
                 } catch (Exception e) {
-                    filePathView.setText("找不到文件管理器！请您下载文件管理器。");
+                    errorInfoView.setText("找不到文件管理器！请您下载文件管理器。");
                     e.printStackTrace();
                 }
                 break;
             case R.id.file_upload_commit_button:
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        errorInfoView.setText("提交成功！\n正在处理...");
-                    }
-                });
-                fileUpload(getActivity());
-                Log.d("MyDebug", "提交文件" + filePathView.getText());
+                if (truePath) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorInfoView.setText("提交成功！\n正在处理...");
+                        }
+                    });
+                    fileUpload(getActivity());
+                    Log.d("MyDebug", "提交文件" + filePathView.getText());
+                }
                 break;
         }
     }
@@ -134,56 +146,64 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
             while ((str = bufr.readLine()) != null) {
                 fileContent += str;
             }
-//                    testView.setText(content);
             final String postString = "sents=" + fileContent;
             new Thread(){
                 @Override
                 public void run() {
                     super.run();
 
-                    String result = HttpUtils.post(PUSERVLET_URL_PATH, postString);
-                    Log.d("MyDebug", "result: " + result);
-                    if (result != null) {
-                        String[] partArr = result.split("\\|");
-                        String[] counts = partArr[0].split(" ");
+                    try {
+                        String result = HttpUtils.post(PUSERVLET_URL_PATH, postString);
+                        Log.d("MyDebug", "result: " + result);
+                        if (result != null) {
+                            String[] partArr = result.split("\\|");
+                            String[] counts = partArr[0].split(" ");
 
-                        String[] sents = fileContent.split("[。？！]");
-                        for (int i = 0; i < sents.length; i++) {
-                            if (!sents[i].equals("")) {
-                                sents[i] = "-1|" + sents[i];
-                            }
-                        }
-
-                        boolean transE = false;
-                        String[] pairs = null;
-                        if (!counts[0].equals("0")) {
-                            String[] positions = partArr[1].split(" ");
-                            for (String p : positions) {
-                                int index = Integer.parseInt(p);
-                                if (!sents[index].equals("")) {
-                                    sents[index] = sents[index].substring(1, sents[index].length());
+                            String[] sents = fileContent.split("[。？！]");
+                            for (int i = 0; i < sents.length; i++) {
+                                if (!sents[i].equals("")) {
+                                    sents[i] = "-1|" + sents[i];
                                 }
                             }
 
-                            String postString2 = "positions=" + partArr[1]
-                                    + "&sents=" + fileContent;
-                            result = HttpUtils.post(TRANSESERVLET_URL_PATH, postString2);
-                            pairs = result.split("\\|");
-                            if (pairs[0].equals("ERROR")) { // 出错
-                                transE = false;
+                            boolean transE = false;
+                            String[] pairs = null;
+                            if (!counts[0].equals("0")) {
+                                String[] positions = partArr[1].split(" ");
+                                for (String p : positions) {
+                                    int index = Integer.parseInt(p);
+                                    if (!sents[index].equals("")) {
+                                        sents[index] = sents[index].substring(1, sents[index].length());
+                                    }
+                                }
+
+                                String postString2 = "positions=" + partArr[1]
+                                        + "&sents=" + fileContent;
+                                result = HttpUtils.post(TRANSESERVLET_URL_PATH, postString2);
+                                pairs = result.split("\\|");
+                                if (pairs[0].equals("ERROR")) { // 出错
+                                    transE = false;
+                                }
+                                else {
+                                    transE = true;
+                                }
+
                             }
-                            else {
-                                transE = true;
+                            RESULE_FILE_PATH = "/storage/emulated/0/_ml-NLP";
+                            SharedPreferences sp = activity.getSharedPreferences("Path", Context.MODE_PRIVATE);
+                            if (sp != null) {
+                                String defaultStoragePath = sp.getString("DefaultStoragePath", null);
+                                if (defaultStoragePath != null) {
+                                    RESULE_FILE_PATH = defaultStoragePath;
+                                }
                             }
 
-                        }
-//                                Log.d("MyDebug", "没有pos");
-                        try {
-                            RESULE_FILE_PATH = "/storage/emulated/0/_ml-NLP";
                             File dir = new File(RESULE_FILE_PATH);
                             if (!dir.exists()) {
-                                dir.mkdir();
+                                dir.mkdirs();
                             }
+                            Log.d("MyDebug", RESULE_FILE_PATH);
+
                             BufferedWriter bufw = new BufferedWriter(new FileWriter(RESULE_FILE_PATH + "/result.txt"));
 
                             bufw.write("# PU-Learning");
@@ -215,19 +235,25 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    errorInfoView.setText("处理完成!\n结果保存至：/_ml-NLP/result.txt");
+                                    errorInfoView.setText("处理完成!\n结果保存至：" + RESULE_FILE_PATH + "/result.txt");
                                 }
                             });
                             Log.d("MyDebug", "分析完成，结果已保存。");
 
 
-                        } catch (Exception e) {
-                            Log.d("MyDebug", "出错");
-                            e.printStackTrace();
                         }
-                    }
-                    else {
-                        Log.d("MyDebug", "服务器返回信息为null");
+                        else {
+                            Log.d("MyDebug", "服务器返回信息为null");
+                        }
+                    } catch (Exception e) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorInfoView.setText("出错！\n请检查您的输入文件。");
+                            }
+                        });
+                        Log.d("MyDebug", "出错");
+                        e.printStackTrace();
                     }
                 }
             }.start();
@@ -241,16 +267,11 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
             });
             e.printStackTrace();
         }
-//                Toast.makeText(this, "文件路径："+uri.getPath().toString(), Toast.LENGTH_SHORT).show();
     }
 
     public static String getRealFilePath(final Context context, final Uri uri ) {
-//        Log.d("MyDebug", "uri: " + uri.getPath());
         if ( null == uri ) return null;
         final String scheme = uri.getScheme();
-//        Log.d("MyDebug", "scheme: " + scheme);
-//        Log.d("MyDebug", "aaaaa1: " + ContentResolver.SCHEME_FILE);
-//        Log.d("MyDebug", "aaaaa2: " + ContentResolver.SCHEME_CONTENT);
         String data = null;
         if ( scheme == null )
             data = uri.getPath();

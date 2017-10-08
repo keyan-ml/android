@@ -14,10 +14,6 @@ import android.widget.TextView;
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
 
-import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class FeedBackActivity extends AppCompatActivity {
     private static final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWeb";
     private final String FEEDBACKSERVLET_URL_PATH = ROOT_URL_PATH + "/feedbackservlet";
@@ -96,10 +92,6 @@ public class FeedBackActivity extends AppCompatActivity {
                                             errorInfoView.setText("您的账号有误！");
                                             return;
                                         }
-//                                    if (resultFromPost.contains("feedinfo")) {
-//                                        errorInfoView.setText("请填入您的反馈信息！");
-//                                        return;
-//                                    }
                                         if (resultFromPost.contains("mysql")) {
                                             errorInfoView.setText("服务器故障，请联系网络管理员！");
                                             return;

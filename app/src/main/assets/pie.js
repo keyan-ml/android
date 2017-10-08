@@ -46,7 +46,7 @@ function showpie(data) {
                             }
                         },
                         restore: {show: true},
-                        saveAsImage: {show: true}
+                        saveAsImage: {show: false}
                     }
                 },
                 calculable: true,

@@ -1,13 +1,15 @@
 package com.example.zwm.myapplication.activity;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.fragment.InputPostFragment;
@@ -20,10 +22,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String TAB_NORMAL_COLOR = "#696969";
     private final String TAB_SELECTED_COLOR = "#8FBC8F";
 
-    private Fragment currentFragment;
+    private long pressTime;
 
     private ImageView tabInputPost;
-    private ImageView tabOther;
+    private ImageView tabFileUpload;
     private ImageView tabUser;
 
     // 三个Fragment
@@ -43,9 +45,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initViews() {
         instance = this;
+        pressTime = 0;
 
         tabInputPost = (ImageView) findViewById(R.id.tab_input_post);
-        tabOther = (ImageView) findViewById(R.id.tab_other);
+        tabFileUpload = (ImageView) findViewById(R.id.tab_file_upload);
         tabUser = (ImageView) findViewById(R.id.tab_user);
 
         inputPostFragment = null;
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         tabInputPost.setOnClickListener(this);
-        tabOther.setOnClickListener(this);
+        tabFileUpload.setOnClickListener(this);
         tabUser.setOnClickListener(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -86,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         tabInputPost.setImageResource(R.mipmap.input_post_selected_icon);
         transaction.show(inputPostFragment);
-//        currentFragment = inputPostFragment;
         transaction.commit();
     }
 
@@ -96,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             transaction.hide(inputPostFragment);
         }
         if (fileUploadFragment != null) {
-            tabOther.setImageResource(R.mipmap.save_result_icon);
+            tabFileUpload.setImageResource(R.mipmap.file_upload_icon);
             transaction.hide(fileUploadFragment);
         }
         if (userFragment != null) {
@@ -117,8 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tabInputPost.setImageResource(R.mipmap.input_post_selected_icon);
                 transaction.show(inputPostFragment);
                 break;
-            case R.id.tab_other:
-                tabOther.setImageResource(R.mipmap.save_selected_icon);
+            case R.id.tab_file_upload:
+                tabFileUpload.setImageResource(R.mipmap.file_upload_selected_icon);
                 transaction.show(fileUploadFragment);
                 break;
             case R.id.tab_user:
@@ -126,5 +128,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 transaction.show(userFragment);
         }
         transaction.commit();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - pressTime > 2000) {
+                Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                pressTime = System.currentTimeMillis();
+                return true;
+            }
+            else { // 2秒内点击了两次
+                SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", MODE_PRIVATE).edit();
+                spEditor.clear();
+                finish();
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }

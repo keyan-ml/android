@@ -11,12 +11,12 @@ import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.fragment.CheckUpdateFragment;
 import com.example.zwm.myapplication.fragment.ClearSpaceFragment;
 import com.example.zwm.myapplication.fragment.HelpFragment;
-import com.example.zwm.myapplication.fragment.MakeDarkFragment;
+import com.example.zwm.myapplication.fragment.DefaultStorageFragment;
 
 public class SettingsFragmentsActivity extends AppCompatActivity {
     public static Activity instance;
 
-    private MakeDarkFragment makeDarkFragment;
+    private DefaultStorageFragment defaultStorageFragment;
     private ClearSpaceFragment clearSpaceFragment;
     private CheckUpdateFragment checkUpdateFragment;
     private HelpFragment helpFragment;
@@ -35,7 +35,7 @@ public class SettingsFragmentsActivity extends AppCompatActivity {
     private void initViews() {
         instance = this;
 
-        makeDarkFragment = null;
+        defaultStorageFragment = null;
         clearSpaceFragment = null;
         checkUpdateFragment = null;
         helpFragment = null;
@@ -45,9 +45,9 @@ public class SettingsFragmentsActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if (makeDarkFragment == null) {
-            makeDarkFragment = new MakeDarkFragment();
-            transaction.add(R.id.settings_fragment_content, makeDarkFragment);
+        if (defaultStorageFragment == null) {
+            defaultStorageFragment = new DefaultStorageFragment();
+            transaction.add(R.id.settings_fragment_content, defaultStorageFragment);
         }
         if (clearSpaceFragment == null) {
             clearSpaceFragment = new ClearSpaceFragment();
@@ -65,9 +65,9 @@ public class SettingsFragmentsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("FragmentId");
         switch (id) {
-            case "MakeDarkFragment":
+            case "DefaultStorageFragment":
                 hideFragments(transaction);
-                transaction.show(makeDarkFragment);
+                transaction.show(defaultStorageFragment);
                 break;
             case "ClearSpaceFragment":
                 hideFragments(transaction);
@@ -86,8 +86,8 @@ public class SettingsFragmentsActivity extends AppCompatActivity {
     }
 
     private void hideFragments(FragmentTransaction transaction) {
-        if (makeDarkFragment != null) {
-            transaction.hide(makeDarkFragment);
+        if (defaultStorageFragment != null) {
+            transaction.hide(defaultStorageFragment);
         }
         if (clearSpaceFragment != null) {
             transaction.hide(clearSpaceFragment);
