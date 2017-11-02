@@ -1,5 +1,6 @@
 package com.example.zwm.myapplication.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
@@ -7,33 +8,38 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class DisplayActivity extends AppCompatActivity implements View.OnClickListener {
     private final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWeb";
     private final String TRANSESERVLET_URL_PATH = ROOT_URL_PATH + "/transeservlet";
     private final String TAB_NORMAL_COLOR = "#bbe4fb";
     private final String TAB_SELECTED_COLOR = "#6A5ACD";
+//    private final String CD_LEGEND_NOT_SELECTED_COLOR = "#DDDDDD";
+//    private final String CD_LEGEND_POS_SELECTED_COLOR = "#FF9192";
+//    private final String CD_LEGEND_NEG_SELECTED_COLOR = "#BFEFFF";
 
     private ViewPager viewPager;
-    private List<View> viewList = new ArrayList<View>();;
+    private List<View> viewList = new ArrayList<View>();
     private PagerAdapter pagerAdapter;
 
     // view
@@ -44,7 +50,12 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout tabReportLayout;
     private LinearLayout cdLegendPos;
     private LinearLayout cdLegendNeg;
-    private LinearLayout cdContainerView;
+
+    private ListView listView;
+    private List<Map<String, String>> list;
+    private CdItemAdapter cdItemAdapter;
+    private boolean posHasShowed;
+    private boolean negHasShowed;
 
     private TextView puErrorView;
     private TextView transeErrorView;
@@ -59,22 +70,18 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
     private ViewTreeObserver vto;
 
-    private LinearLayout.LayoutParams layoutParamsOfcdContainer;
     private LinearLayout.LayoutParams layoutParamsOfViewLayout;
 
-    private int cdItemHeignt;
-    private List<TextView> cdTextViewList;
-    private HashMap<Integer, TextView> cdTextViewMap;
     private String[] countArr;
     private String positionOfPos;
     private String[] positionArr;
-    //    private List<TextView> cdShowList;
 
     private String forceVertexArr;
     private String forceArcArr;
 
     private String inputText;
     private String resultFromPU;
+    private String[] sentArr;
     private boolean transESuccess;
 
     private int countPos;
@@ -95,6 +102,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         // 获取参数
         Intent intent = getIntent();
         inputText = intent.getStringExtra("inputText");
+        sentArr = inputText.toString().split("[。！？]"); // 分句
         resultFromPU = intent.getStringExtra("resultFromPU");
         // 获取参数
 
@@ -159,19 +167,19 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
         cdLegendPos = (LinearLayout) tabCDView.findViewById(R.id.cd_legend_pos);
         cdLegendNeg = (LinearLayout) tabCDView.findViewById(R.id.cd_legend_neg);
-        cdContainerView = (LinearLayout) tabCDView.findViewById(R.id.container_of_cd);
+        listView = (ListView) tabCDView.findViewById(R.id.container_of_cd);
+        list = new ArrayList<Map<String, String>>();
+
         pieViewLayout = (LinearLayout) tabPUView.findViewById(R.id.pie_web_view_layout);
         forceViewLayout = (LinearLayout) tabTransEView.findViewById(R.id.force_web_view_layout);
         reportView = (TextView) tabReportView.findViewById(R.id.report_content);
         // 初始化View
 
-        cdTextViewMap = new HashMap<Integer, TextView>();
-        cdTextViewList = new ArrayList<TextView>();
+        posHasShowed = true;
+        negHasShowed = true;
     }
 
     private void initEvents() {
-//        // 去掉分类标注部分的所有（上次）记录
-//        cdContainerView.removeAllViewsInLayout();
         backView.setOnClickListener(this);
 
         tabCDLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
@@ -222,64 +230,38 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 countPos = Integer.parseInt(countArr[0].trim());
                 countAll = countPos + Integer.parseInt(countArr[1].trim());
 
-                layoutParamsOfcdContainer = (LinearLayout.LayoutParams) cdContainerView.getLayoutParams();
-                /**
-                 * 将文本输入框中的文本分句,逐句处理。先按负例处理，跳过空句子，后由分析结果信息重新处理正例句子
-                 */
-                String[] sentArr = inputText.toString().split("[。！？]"); // 分句
-                for (int i = 0; i < sentArr.length; i++) {
-                    TextView tv = new TextView(DisplayActivity.this);
-                    tv.setWidth(layoutParamsOfcdContainer.width); // 宽度
-                    tv.setText(sentArr[i]); // 文本
-                    tv.setTextColor(Color.parseColor("#000000")); // 文本颜色
-                    tv.setTextSize(16f); // 文本字体大小
-                    tv.setBackgroundResource(R.drawable.neg_distribution_border); // 背景色
-                    cdTextViewList.add(tv);
-
-//                        if (!sentArr[i].equals("")) { // 跳过空句子
-//                            TextView tv = new TextView(DisplayActivity.this);
-//                            tv.setWidth(layoutParamsOfcdContainer.width); // 宽度
-//                            tv.setText(sentArr[i]); // 文本
-//                            tv.setTextColor(Color.parseColor("#000000")); // 文本颜色
-//                            tv.setTextSize(16f); // 文本字体大小
-//                            tv.setBackgroundResource(R.drawable.neg_distribution_border); // 背景色
-//                            cdTextViewMap.put(i, tv);cdTextViewList
-//                        }
-                }
-                if (!positionOfPos.equals("")) { // 有负面信息
-                    // 分类颜色标注
-                    positionArr = positionOfPos.split(" ");
-
-                    /**
-                     * 对所有的正例句子重新处理，修改为正确的底色
-                     */
-                    for (int i = 0; i < positionArr.length; i++) {
-                        int index = Integer.parseInt(positionArr[i]);
-                        TextView tv = cdTextViewList.get(index);
-                        tv.setBackgroundResource(R.drawable.pos_distribution_border);
-                        cdTextViewList.remove(index);
-                        cdTextViewList.add(index, tv);
-
-//                            String text = sentArr[Integer.parseInt(positionArr[i])]; // 取出被分类为正例的一个句子文本
-//                            if (!text.equals("")) { // 跳过空句子
-//                                TextView tv = cdTextViewMap.get(Integer.parseInt(positionArr[i]));
-//                                tv.setBackgroundResource(R.drawable.pos_distribution_border);
-//                                cdTextViewMap.put(Integer.parseInt(positionArr[i]), tv);
-//                            }
-                    }
-                }
-
-                showAllSents();
-//                    cdContainerView.removeAllViews();
-//                    // 调整句子的显示顺序
-//                    Set<Integer> keySet = cdTextViewMap.keySet();
-//                    ArrayList<Integer> keyList = new ArrayList<Integer>(keySet);
-//                    Collections.sort(keyList);
-//                    for (int position : keyList) {
-//                        cdContainerView.addView( cdTextViewMap.get(position) );
+                showAll();
+//                // 分类标注
+//                String[] sentArr = inputText.toString().split("[。！？]"); // 分句
+//                for (int i = 0; i < sentArr.length; i++) {
+//                    Map<String, String> map = new HashMap<String, String>();
+//                    map.put("type", "neg");
+//                    map.put("text", sentArr[i]);
+//                    list.add(map);
+//                }
+//                if (!positionOfPos.equals("")) { // 有负面信息
+//                    positionArr = positionOfPos.split(" ");
+//                    for (int i = 0; i < positionArr.length; i++) {
+//                        int index = Integer.parseInt(positionArr[i]);
+//                        Map<String, String> map = list.get(index);
+//                        map.put("type", "pos");
+//                        list.remove(index);
+//                        list.add(index, map);
 //                    }
-
-                // 分类颜色标注
+//                }
+//                int a = 0;
+//                while (a < list.size()) {
+//                    Map<String, String> map = list.get(a);
+//                    if (map.get("text").equals("")) {
+//                        list.remove(a);
+//                    }
+//                    else {
+//                        a++;
+//                    }
+//                }
+//                cdItemAdapter = new CdItemAdapter(this, list);
+//                listView.setAdapter(cdItemAdapter);
+//                // 分类标注
 
                 /**
                  * 饼图
@@ -398,29 +380,89 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        resetImage();
         switch (view.getId()) {
             case R.id.display_back_view:
                 finish();
                 break;
             case R.id.tab_cd:
+                resetImage();
                 tabCDLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(0);
                 break;
             case R.id.tab_pu:
+                resetImage();
                 tabPULayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(1);
                 break;
             case R.id.tab_transe:
+                resetImage();
                 tabTransELayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(2);
                 break;
             case R.id.tab_report:
+                resetImage();
                 tabReportLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(3);
                 break;
             case R.id.cd_legend_pos:
-
+                if (posHasShowed && negHasShowed) {
+                    posHasShowed = false;
+                    hideLegendColor();
+                    ((TextView) findViewById(R.id.cd_legend_neg_color)).setBackgroundColor(
+                            getResources().getColor(R.color.cd_legend_neg_selected));
+                    ((TextView) findViewById(R.id.cd_legend_neg_text)).setTextColor(
+                            getResources().getColor(R.color.cd_legend_text));
+                    showNeg();
+                }
+                else if (posHasShowed && !negHasShowed) {
+                    posHasShowed = false;
+                    hideLegendColor();
+                    showNone();
+                }
+                else if (!posHasShowed && negHasShowed) {
+                    posHasShowed = true;
+                    showLegendColor();
+                    showAll();
+                }
+                else {
+                    posHasShowed = true;
+                    hideLegendColor();
+                    ((TextView) findViewById(R.id.cd_legend_pos_color)).setBackgroundColor(
+                            getResources().getColor(R.color.cd_legend_pos_selected));
+                    ((TextView) findViewById(R.id.cd_legend_pos_text)).setTextColor(
+                            getResources().getColor(R.color.cd_legend_text));
+                    showPos();
+                }
+                break;
+            case R.id.cd_legend_neg:
+                if (negHasShowed && posHasShowed) {
+                    negHasShowed = false;
+                    hideLegendColor();
+                    ((TextView) findViewById(R.id.cd_legend_pos_color)).setBackgroundColor(
+                            getResources().getColor(R.color.cd_legend_pos_selected));
+                    ((TextView) findViewById(R.id.cd_legend_pos_text)).setTextColor(
+                            getResources().getColor(R.color.cd_legend_text));
+                    showPos();
+                }
+                else if (negHasShowed && !posHasShowed) {
+                    negHasShowed = false;
+                    hideLegendColor();
+                    showNone();
+                }
+                else if (!negHasShowed && posHasShowed) {
+                    negHasShowed = true;
+                    showLegendColor();
+                    showAll();
+                }
+                else {
+                    negHasShowed = true;
+                    hideLegendColor();
+                    ((TextView) findViewById(R.id.cd_legend_neg_color)).setBackgroundColor(
+                            getResources().getColor(R.color.cd_legend_neg_selected));
+                    ((TextView) findViewById(R.id.cd_legend_neg_text)).setTextColor(
+                            getResources().getColor(R.color.cd_legend_text));
+                    showNeg();
+                }
         }
     }
 
@@ -431,30 +473,199 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         tabReportLayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
     }
 
-    private void showAllSents() {
-        cdContainerView.removeAllViews();
-        // 调整句子的显示顺序
-        for (int i = 0; i < cdTextViewList.size(); i++) {
-            TextView tv = cdTextViewList.get(i);
-            if (!tv.getText().equals("")) {
-                cdContainerView.addView(tv);
-            }
-        }
+    private void showLegendColor() {
+        ((TextView) findViewById(R.id.cd_legend_pos_color)).setBackgroundColor(
+                getResources().getColor(R.color.cd_legend_pos_selected));
+        ((TextView) findViewById(R.id.cd_legend_pos_text)).setTextColor(
+                getResources().getColor(R.color.cd_legend_text));
+        ((TextView) findViewById(R.id.cd_legend_neg_color)).setBackgroundColor(
+                getResources().getColor(R.color.cd_legend_neg_selected));
+        ((TextView) findViewById(R.id.cd_legend_neg_text)).setTextColor(
+                getResources().getColor(R.color.cd_legend_text));
     }
 
-//    private void showPos() {
-//        if (countArr[0].trim().equals("0")) { // 没有负面，移除所有View级就行了
-//
-//        }
-//    }
-//
-//    private void showNeg() {
-//
-//    }
+    private void hideLegendColor() {
+        ((TextView) findViewById(R.id.cd_legend_pos_color)).setBackgroundColor(
+                getResources().getColor(R.color.cd_legend_not_selected));
+        ((TextView) findViewById(R.id.cd_legend_pos_text)).setTextColor(
+                getResources().getColor(R.color.cd_legend_not_selected));
+        ((TextView) findViewById(R.id.cd_legend_neg_color)).setBackgroundColor(
+                getResources().getColor(R.color.cd_legend_not_selected));
+        ((TextView) findViewById(R.id.cd_legend_neg_text)).setTextColor(
+                getResources().getColor(R.color.cd_legend_not_selected));
+    }
+
+    private void showAll() {
+        list.clear();
+        for (int i = 0; i < sentArr.length; i++) {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("type", "neg");
+            map.put("text", sentArr[i]);
+            list.add(map);
+        }
+        if (!positionOfPos.equals("")) { // 有负面信息
+            positionArr = positionOfPos.split(" ");
+            for (int i = 0; i < positionArr.length; i++) {
+                int index = Integer.parseInt(positionArr[i]);
+                Map<String, String> map = list.get(index);
+                map.put("type", "pos");
+                list.remove(index);
+                list.add(index, map);
+            }
+        }
+        int a = 0;
+        while (a < list.size()) {
+            Map<String, String> map = list.get(a);
+            if (map.get("text").equals("")) {
+                list.remove(a);
+            }
+            else {
+                a++;
+            }
+        }
+        cdItemAdapter = new CdItemAdapter(this, list);
+        listView.setAdapter(cdItemAdapter);
+    }
+
+    private void showPos() {
+        list.clear(); // 重新组织显示数据
+        positionArr = positionOfPos.split(" ");
+        for (int i = 0; i < positionArr.length; i++) {
+            int index = Integer.parseInt(positionArr[i]);
+            if (!sentArr[index].equals("")) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("type", "pos");
+                map.put("text", sentArr[index]);
+                list.add(map);
+            }
+        }
+        cdItemAdapter = new CdItemAdapter(this, list);
+        listView.setAdapter(cdItemAdapter);
+    }
+
+    private void showNeg() {
+        list.clear();
+        for (int i = 0; i < sentArr.length; i++) {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("type", "neg");
+            map.put("text", sentArr[i]);
+            list.add(map);
+        }
+        if (!positionOfPos.equals("")) { // 有负面信息，则去掉所有的负面信息
+            int offset = 0;
+            positionArr = positionOfPos.split(" ");
+            for (int i = 0; i < positionArr.length; i++) {
+                int index = Integer.parseInt(positionArr[i]) - offset++;
+                list.remove(index);
+            }
+        }
+        int a = 0;
+        while (a < list.size()) { // 去掉空句子
+            Map<String, String> map = list.get(a);
+            if (map.get("text").equals("")) {
+                list.remove(a);
+            }
+            else {
+                a++;
+            }
+        }
+        cdItemAdapter = new CdItemAdapter(this, list);
+        listView.setAdapter(cdItemAdapter);
+    }
+
+    private void showNone() {
+        list.clear();
+        cdItemAdapter = new CdItemAdapter(this, list);
+        listView.setAdapter(cdItemAdapter);
+    }
+
+    @Override
+    //设置回退
+    //覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && pieView.canGoBack()) {
+            pieView.goBack(); //goBack()表示返回WebView的上一页面
+            return true;
+        }
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && forceView.canGoBack()) {
+            forceView.goBack(); //goBack()表示返回WebView的上一页面
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //销毁Webview
+    @Override
+    protected void onDestroy() {
+        if (pieView != null) {
+            pieView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+            pieView.clearHistory();
+
+            ((ViewGroup) pieView.getParent()).removeView(pieView);
+            pieView.destroy();
+            pieView = null;
+        }
+        if (forceView != null) {
+            forceView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+            forceView.clearHistory();
+
+            ((ViewGroup) forceView.getParent()).removeView(forceView);
+            forceView.destroy();
+            forceView = null;
+        }
+        super.onDestroy();
+    }
+
 
     private void buildReport(int countPos, int countAll, int countTransT) {
         String persentInfoStr = String.format("%.2f",  (float) countPos * 100 / countAll ) + "%";
         reportView.setText("这篇文章总共有 " + countPos + " 个负面句子，" +
                 "占百分比 " + persentInfoStr + "。\n从中抽取出共 " + countTransT + " 组属性信息。");
+    }
+
+    class CdItemAdapter extends BaseAdapter {
+        private List<Map<String, String>> data;
+        private LayoutInflater layoutInflater;
+        private Context context;
+
+        public CdItemAdapter(Context context, List<Map<String, String>> data) {
+            //传入的data，就是我们要在listview中显示的信息
+            this.context = context;
+            this.data = data;
+            this.layoutInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return data.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            String type = data.get(i).get("type").trim();
+            String text = data.get(i).get("text");
+            switch (type) {
+                case "pos":
+                    view = layoutInflater.inflate(R.layout.tab_cd_item_pos, null);
+                    break;
+                case "neg":
+                    view = layoutInflater.inflate(R.layout.tab_cd_item_neg, null);
+            }
+
+            TextView textView = (TextView) view.findViewById(R.id.tab_cd_item);
+            textView.setText(text);
+
+            return view;
+        }
     }
 }

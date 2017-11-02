@@ -5,4 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="textNotPressed">#FFFFFF</color>
     <color name="textPressed">#BBBBBB</color>
+    <color name="cd_legend_pos_selected">#FF9192</color>
+    <color name="cd_legend_neg_selected">#BFEFFF</color>
+    <color name="cd_legend_not_selected">#AAAAAA</color>
+    <color name="cd_legend_text">#000000</color>
+    <color name="cd_text">#000000</color>
 </resources>
