@@ -202,7 +202,7 @@
             android:layout_marginTop="5dp"
             android:text="修改"
             android:textSize="22sp"
-            android:textColor="@color/colorButtonText"
+            android:textColor="@color/textNotPressed"
             android:background="@drawable/button_selector"/>
 
     </LinearLayout>

@@ -60,9 +60,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initEvents() {
         if (SignInActivity.instance != null) {
             SignInActivity.instance.finish(); // 结束登录界面activity
+            SignInActivity.instance = null;
         }
         if (SignUpActivity.instance != null) {
             SignUpActivity.instance.finish(); // 结束注册界面activity
+            SignUpActivity.instance = null;
         }
 
         tabInputPost.setOnClickListener(this);

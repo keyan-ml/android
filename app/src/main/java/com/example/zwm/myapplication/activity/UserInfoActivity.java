@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
+import com.example.zwm.myapplication.model.SignInStatus;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 public class UserInfoActivity extends AppCompatActivity {
@@ -71,6 +72,10 @@ public class UserInfoActivity extends AppCompatActivity {
         uemailaddressEditor.setText(sp.getString("uemailaddress", ""));
         uorganizationEditor.setText(sp.getString("uorganization", ""));
         ucontactwayEditor.setText(sp.getString("ucontactway", ""));
+
+        if (!SignInStatus.hasSignedIn) {
+            wantEditView.setText("请您先登录");
+        }
     }
 
     private void initEvents() {
@@ -85,84 +90,85 @@ public class UserInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d("MyDebug", "clicked! want to edit");
+                if (SignInStatus.hasSignedIn) {
+                    if (wantEditView.getText().equals("修改")) { // 编辑状态
+                        unameEditor.setFocusable(true);
+                        unameEditor.setFocusableInTouchMode(true);
+                        unameEditor.setCursorVisible(true);
+                        unameLayout.setBackgroundResource(R.drawable.border_drawer);
 
-                if (wantEditView.getText().equals("修改")) { // 编辑状态
-                    unameEditor.setFocusable(true);
-                    unameEditor.setFocusableInTouchMode(true);
-                    unameEditor.setCursorVisible(true);
-                    unameLayout.setBackgroundResource(R.drawable.border_drawer);
+                        uorganizationEditor.setFocusable(true);
+                        uorganizationEditor.setFocusableInTouchMode(true);
+                        uorganizationEditor.setCursorVisible(true);
+                        uorganizationLayout.setBackgroundResource(R.drawable.border_drawer);
 
-                    uorganizationEditor.setFocusable(true);
-                    uorganizationEditor.setFocusableInTouchMode(true);
-                    uorganizationEditor.setCursorVisible(true);
-                    uorganizationLayout.setBackgroundResource(R.drawable.border_drawer);
+                        ucontactwayEditor.setFocusable(true);
+                        ucontactwayEditor.setFocusableInTouchMode(true);
+                        ucontactwayEditor.setCursorVisible(true);
+                        ucontactwayLayout.setBackgroundResource(R.drawable.border_drawer);
 
-                    ucontactwayEditor.setFocusable(true);
-                    ucontactwayEditor.setFocusableInTouchMode(true);
-                    ucontactwayEditor.setCursorVisible(true);
-                    ucontactwayLayout.setBackgroundResource(R.drawable.border_drawer);
+                        wantEditView.setText("保存");
+                    }
+                    else { // 编辑完成，请求提交
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
 
-                    wantEditView.setText("保存");
-                }
-                else { // 编辑完成，请求提交
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
+                                try {
+                                    SharedPreferences sp = getSharedPreferences("UserInFo", MODE_PRIVATE);
+                                    uemailaddress = sp.getString("uemailaddress", "");
 
-                            try {
-                                SharedPreferences sp = getSharedPreferences("UserInFo", MODE_PRIVATE);
-                                uemailaddress = sp.getString("uemailaddress", "");
+                                    postString = "postreason=modify"
+                                            + "&uemailaddress=" + uemailaddress
+                                            + "&uname=" + new String(unameEditor.getText().toString().getBytes(), "UTF-8")
+                                            +"&uorganization=" + new String(uorganizationEditor.getText().toString().getBytes(), "UTF-8")
+                                            +"&ucontactway=" + new String(ucontactwayEditor.getText().toString().getBytes(), "UTF-8");
+                                    result = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
+                                    Log.d("MyDebug", result);
+                                    if (result.contains("failed")) { // 服务器mysql获取用户信息失败
+                                        Log.d("MyDebug", "mysqling on server is failed");
+                                        errorInfoView.setText("保存失败（服务器出错）");
+                                    }
+                                    else { // 修改成功，界面重回不可编辑状态
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                errorInfoView.setText("保存成功");
 
-                                postString = "postreason=modify"
-                                        + "&uemailaddress=" + uemailaddress
-                                        + "&uname=" + new String(unameEditor.getText().toString().getBytes(), "UTF-8")
-                                        +"&uorganization=" + new String(uorganizationEditor.getText().toString().getBytes(), "UTF-8")
-                                        +"&ucontactway=" + new String(ucontactwayEditor.getText().toString().getBytes(), "UTF-8");
-                                result = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
-                                Log.d("MyDebug", result);
-                                if (result.contains("failed")) { // 服务器mysql获取用户信息失败
-                                    Log.d("MyDebug", "mysqling on server is failed");
-                                    errorInfoView.setText("保存失败（服务器出错）");
+                                                SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", MODE_PRIVATE).edit();
+                                                spEditor.putString("uname", unameEditor.getText().toString());
+                                                spEditor.putString("uorganization", uorganizationEditor.getText().toString());
+                                                spEditor.putString("ucontactway", ucontactwayEditor.getText().toString());
+                                                spEditor.commit();
+
+                                                unameEditor.setFocusable(false);
+                                                unameEditor.setFocusableInTouchMode(false);
+                                                unameEditor.setCursorVisible(false);
+                                                unameLayout.setBackgroundResource(R.drawable.edit_text_false);
+
+                                                uorganizationEditor.setFocusable(false);
+                                                uorganizationEditor.setFocusableInTouchMode(false);
+                                                uorganizationEditor.setCursorVisible(false);
+                                                uorganizationLayout.setBackgroundResource(R.drawable.edit_text_false);
+
+                                                ucontactwayEditor.setFocusable(false);
+                                                ucontactwayEditor.setFocusableInTouchMode(false);
+                                                ucontactwayEditor.setCursorVisible(false);
+                                                ucontactwayLayout.setBackgroundResource(R.drawable.edit_text_false);
+
+                                                wantEditView.setText("修改");
+                                            }
+                                        });
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(MainActivity.instance, "无法连接服务器", Toast.LENGTH_SHORT);
                                 }
-                                else { // 修改成功，界面重回不可编辑状态
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            errorInfoView.setText("保存成功");
-
-                                            SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", MODE_PRIVATE).edit();
-                                            spEditor.putString("uname", unameEditor.getText().toString());
-                                            spEditor.putString("uorganization", uorganizationEditor.getText().toString());
-                                            spEditor.putString("ucontactway", ucontactwayEditor.getText().toString());
-                                            spEditor.commit();
-
-                                            unameEditor.setFocusable(false);
-                                            unameEditor.setFocusableInTouchMode(false);
-                                            unameEditor.setCursorVisible(false);
-                                            unameLayout.setBackgroundResource(R.drawable.edit_text_false);
-
-                                            uorganizationEditor.setFocusable(false);
-                                            uorganizationEditor.setFocusableInTouchMode(false);
-                                            uorganizationEditor.setCursorVisible(false);
-                                            uorganizationLayout.setBackgroundResource(R.drawable.edit_text_false);
-
-                                            ucontactwayEditor.setFocusable(false);
-                                            ucontactwayEditor.setFocusableInTouchMode(false);
-                                            ucontactwayEditor.setCursorVisible(false);
-                                            ucontactwayLayout.setBackgroundResource(R.drawable.edit_text_false);
-
-                                            wantEditView.setText("修改");
-                                        }
-                                    });
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(MainActivity.instance, "无法连接服务器", Toast.LENGTH_SHORT);
                             }
-                        }
-                    }.start();
-                } // else
+                        }.start();
+                    } // else
+                }
             } // onClick()
         });
     }

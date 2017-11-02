@@ -23,8 +23,7 @@ import com.example.zwm.myapplication.activity.HistoryActivity;
 import com.example.zwm.myapplication.activity.SettingsActivity;
 import com.example.zwm.myapplication.activity.SignInActivity;
 import com.example.zwm.myapplication.activity.UserInfoActivity;
-
-import org.w3c.dom.Text;
+import com.example.zwm.myapplication.model.SignInStatus;
 
 /**
  * Created by zwm on 2017/10/4.
@@ -73,7 +72,6 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         feedbackView = (LinearLayout) activity.findViewById(R.id.user_feedback);
         settingsView = (LinearLayout) activity.findViewById(R.id.user_settings);
         signOutBtn = (Button) activity.findViewById(R.id.user_sign_out_button);
-
     }
 
     private void  initEvents(FragmentActivity activity) {
@@ -113,8 +111,17 @@ public class UserFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.user_sign_out_button:
-                Log.d("MyDebug", "click sign out button");
-                showSignOutDialog();
+                if (SignInStatus.hasSignedIn) {
+                    showSignOutDialog();
+                }
+                else {
+                    if (SignInActivity.instance != null) {
+                        SignInActivity.instance.finish();
+                        SignInActivity.instance = null;
+                    }
+                    intent.setClass(getActivity(), SignInActivity.class);
+                    startActivity(intent);
+                }
         }
     }
 

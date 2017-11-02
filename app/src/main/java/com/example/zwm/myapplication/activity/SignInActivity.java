@@ -15,9 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
+import com.example.zwm.myapplication.model.SignInStatus;
 import com.example.zwm.myapplication.util.HttpUtils;
-
-import java.net.HttpRetryException;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     public static Activity instance;
@@ -30,7 +29,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private EditText upasswordView;
     private TextView errorInfoView;
     private Button signInButton;
-
+    private TextView signInDefault;
     private TextView modifyPasswordView;
     private TextView signUpView;
     // view
@@ -65,6 +64,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         errorInfoView = (TextView) findViewById(R.id.sign_in_error_info);
         signInButton = (Button) findViewById(R.id.sign_in_button);
+        signInDefault = (TextView) findViewById(R.id.sign_in_default_user);
         modifyPasswordView = (TextView) findViewById(R.id.sign_in_forget_password);
         signUpView = (TextView) findViewById(R.id.sign_in_go_sign_up);
 
@@ -76,7 +76,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initEvents() {
+        if (MainActivity.instance != null) {
+            MainActivity.instance.finish();
+            MainActivity.instance = null;
+        }
+
         signInButton.setOnClickListener(this);
+        signInDefault.setOnClickListener(this);
         modifyPasswordView.setOnClickListener(this);
         signUpView.setOnClickListener(this);
     }
@@ -184,10 +190,25 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 }.start();
                 break;
+            case R.id.sign_in_default_user:
+                SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                spEditor.putString("uname", "DefaultUser");
+                spEditor.putString("uemailaddress", "none");
+                spEditor.putString("upassword", "none");
+                spEditor.putString("uorganization", "");
+                spEditor.putString("ucontactway", "");
+                spEditor.commit();
+                SignInStatus.hasSignedIn = false;
+                Log.d("MyDebug", "游客登录");
+
+                Intent intentDefault = new Intent();
+                intentDefault.setClass(SignInActivity.this, MainActivity.class);
+                startActivity(intentDefault);
+                break;
             case R.id.sign_in_forget_password:
-                Intent intent = new Intent();
-                intent.setClass(this, ModifyPasswordActivity.class);
-                startActivity(intent);
+                Intent intentForgetPw = new Intent();
+                intentForgetPw.setClass(this, ModifyPasswordActivity.class);
+                startActivity(intentForgetPw);
                 break;
             case R.id.sign_in_go_sign_up:
                 Intent intentSignUp = new Intent();
