@@ -170,11 +170,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                                 spEditor.putString("uorganization", userInfoArr[2]);
                                                 spEditor.putString("ucontactway", userInfoArr[3]);
                                                 spEditor.commit();
-
+                                                SignInStatus.hasSignedIn = true;
                                                 Intent intent = new Intent();
                                                 intent.setClass(SignInActivity.this, MainActivity.class);
                                                 startActivity(intent);
-
                                             }
                                             else {
                                                 errorInfoView.setText("网络有误！");

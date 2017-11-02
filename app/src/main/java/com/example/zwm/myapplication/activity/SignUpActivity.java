@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
+import com.example.zwm.myapplication.model.SignInStatus;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 import java.util.Date;
@@ -169,7 +170,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         spEditor = getSharedPreferences("Path", Context.MODE_PRIVATE).edit();
                                         spEditor.putString("DefaultStoragePath", "/storage/emulated/0/_ml-NLP");
                                         spEditor.commit();
-
+                                        SignInStatus.hasSignedIn = true;
                                         Intent intent = new Intent();
                                         intent.setClass(SignUpActivity.this, MainActivity.class);
                                         startActivity(intent);

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
+import com.example.zwm.myapplication.model.SignInStatus;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 public class FeedBackActivity extends AppCompatActivity {
@@ -45,6 +46,9 @@ public class FeedBackActivity extends AppCompatActivity {
         feedInfoView = (EditText) findViewById(R.id.feedback_info);
         feedbackCommitBtn = (Button) findViewById(R.id.feedback_commit);
         errorInfoView = (TextView) findViewById(R.id.feedback_error_info);
+        if (!SignInStatus.hasSignedIn) {
+            feedbackCommitBtn.setText("请您先登录");
+        }
     }
 
     private void initEvents() {
@@ -59,53 +63,55 @@ public class FeedBackActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    SharedPreferences sp = getSharedPreferences("UserInFo", Context.MODE_PRIVATE);
-                    uemailaddress = sp.getString("uemailaddress", "");
-                    feedinfo = feedInfoView.getText().toString();
-                    inputtext = sp.getString("inputtext", "");
-                    Log.d("MyDebug", uemailaddress + ": " + feedinfo);
-                    postString = "uemailaddress=" + uemailaddress
-                            + "&feedinfo=" + feedinfo
-                            + "&inputtext=" + inputtext;
+                    if (SignInStatus.hasSignedIn) {
+                        SharedPreferences sp = getSharedPreferences("UserInFo", Context.MODE_PRIVATE);
+                        uemailaddress = sp.getString("uemailaddress", "");
+                        feedinfo = feedInfoView.getText().toString();
+                        inputtext = sp.getString("inputtext", "");
+                        Log.d("MyDebug", uemailaddress + ": " + feedinfo);
+                        postString = "uemailaddress=" + uemailaddress
+                                + "&feedinfo=" + feedinfo
+                                + "&inputtext=" + inputtext;
 //                    postString = new String(new String(postString.getBytes(), "UTF-8").getBytes("GBK"));
 
-                    if (uemailaddress.equals("")) {
-                        errorInfoView.setText("您的邮箱有误！");
-                        return;
-                    }
-                    if (feedinfo.equals("")) {
-                        errorInfoView.setText("请填入您的反馈信息！");
-                        return;
-                    }
-
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            super.run();
-
-                            resultFromPost = HttpUtils.post(FEEDBACKSERVLET_URL_PATH, postString);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (resultFromPost.contains("failed")) { // 提交失败
-                                        if (resultFromPost.contains("emailaddress")) {
-                                            errorInfoView.setText("您的账号有误！");
-                                            return;
-                                        }
-                                        if (resultFromPost.contains("mysql")) {
-                                            errorInfoView.setText("服务器故障，请联系网络管理员！");
-                                            return;
-                                        }
-                                        errorInfoView.setText("未知错误！");
-                                    }
-                                    else {
-                                        errorInfoView.setText("提交成功！");
-                                    }
-
-                                }
-                            });
+                        if (uemailaddress.equals("")) {
+                            errorInfoView.setText("您的邮箱有误！");
+                            return;
                         }
-                    }.start();
+                        if (feedinfo.equals("")) {
+                            errorInfoView.setText("请填入您的反馈信息！");
+                            return;
+                        }
+
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+
+                                resultFromPost = HttpUtils.post(FEEDBACKSERVLET_URL_PATH, postString);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (resultFromPost.contains("failed")) { // 提交失败
+                                            if (resultFromPost.contains("emailaddress")) {
+                                                errorInfoView.setText("您的账号有误！");
+                                                return;
+                                            }
+                                            if (resultFromPost.contains("mysql")) {
+                                                errorInfoView.setText("服务器故障，请联系网络管理员！");
+                                                return;
+                                            }
+                                            errorInfoView.setText("未知错误！");
+                                        }
+                                        else {
+                                            errorInfoView.setText("提交成功！");
+                                        }
+
+                                    }
+                                });
+                            }
+                        }.start();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -118,3 +118,14 @@ function showforce(nodes,links){
         }
     );
 }
+
+function refreshData(){
+     if(!myChart){
+          return;
+     }
+
+     //更新数据
+      var option = myChart.getOption();
+//      option.series[0].data = data;
+      myChart.setOption(option);
+}

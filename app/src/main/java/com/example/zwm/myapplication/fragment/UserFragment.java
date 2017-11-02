@@ -72,6 +72,9 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         feedbackView = (LinearLayout) activity.findViewById(R.id.user_feedback);
         settingsView = (LinearLayout) activity.findViewById(R.id.user_settings);
         signOutBtn = (Button) activity.findViewById(R.id.user_sign_out_button);
+        if (!SignInStatus.hasSignedIn) {
+            signOutBtn.setText("登录");
+        }
     }
 
     private void  initEvents(FragmentActivity activity) {

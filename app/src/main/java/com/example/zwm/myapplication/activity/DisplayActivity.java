@@ -2,6 +2,7 @@ package com.example.zwm.myapplication.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
@@ -266,17 +269,17 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 /**
                  * 饼图
                  */
-                layoutParamsOfViewLayout = (LinearLayout.LayoutParams) pieViewLayout.getLayoutParams();
-                // 增加整体布局监听
-                vto = pieViewLayout.getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        layoutParamsOfViewLayout.height = (int) (pieViewLayout.getWidth() * 1.2); // 通过整体布局监听，获得View宽度
-                    }
-                });
+//                layoutParamsOfViewLayout = (LinearLayout.LayoutParams) pieViewLayout.getLayoutParams();
+//                // 增加整体布局监听
+//                vto = pieViewLayout.getViewTreeObserver();
+//                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        layoutParamsOfViewLayout.height = (int) (pieViewLayout.getWidth() * 1.2); // 通过整体布局监听，获得View宽度
+//                    }
+//                });
                 puErrorView.setHeight(0); // 隐藏错误信息显示区域
-                pieViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数
+//                pieViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数
                 pieView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
                 pieView.loadUrl("file:///android_asset/pie.html"); // 加载需要显示的网页
                 //设置Web视图
@@ -284,6 +287,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
+//                        String callJs = "javascript:showpie([{value: " + countArr[0] + ",name: '负面', selected:false},{value: " + countArr[1] + ",name: '正面'}])";
+//                        pieView.loadUrl(callJs); // 执行js语句
 
                         //在这里执行你想调用的js函数
                         pieView.post(new Runnable() {
@@ -323,12 +328,12 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                             String[] tempPairs = pairs[0].split(" ");
                             forceVertexArr = "[{category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
                                             "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
-                            forceArcArr = "[{source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
+                            forceArcArr = "[{source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 8}";
                             for (int i = 1; i < pairs.length; i++) { // 先将头尾实体点信息及之间弧信息整理到两个数组中
                                 tempPairs = pairs[i].split(" ");
                                 forceVertexArr += ", {category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
                                         "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
-                                forceArcArr += ", {source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 5}";
+                                forceArcArr += ", {source: \'" + tempPairs[0] + "\', target: \'" + tempPairs[1] + "\', weight: 1}";
                             }
                             forceVertexArr += "]";
                             forceArcArr += "]";
@@ -339,14 +344,32 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void run() {
                                 if (transESuccess) {
+                                    Log.d("MyDebug", "force部分开始");
                                     transeErrorView.setHeight(0); // 隐藏错误信息显示区域
-                                    forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
+//                                    forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
+                                    forceView.getSettings().setAllowFileAccess(true);
                                     forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
                                     forceView.loadUrl("file:///android_asset/force.html"); // 加载需要显示的网页
+                                    // 添加一个对象, 让JS可以访问该对象的方法, 该对象中可以调用JS中的方法
+//                                    forceView.addJavascriptInterface(new ForceJSInterface(), "forcejsinterface");
+//                                    forceView.setWebViewClient(new WebViewClient(){
+//                                        @Override
+//                                        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//                                            view.loadUrl(url);
+//                                            return true;
+//                                        }
+//                                    });
                                     forceView.setWebViewClient(new WebViewClient() {//设置Web视图
+                                        //设置加载前的函数
+                                        @Override
+                                        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                                            Log.d("MyDebug", "force开始加载");
+                                        }
+
                                         @Override
                                         public void onPageFinished(WebView view, String url) {
                                             super.onPageFinished(view, url);
+                                            Log.d("MyDebug", "force加载完成\nforce 开始执行js");
 
                                             // 在这里执行你想调用的js函数
                                             forceView.post(new Runnable() {
@@ -354,10 +377,13 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
                                                 public void run() {
                                                     forceView.loadUrl(callJs); // 执行js语句，显示force图
+                                                    forceView.loadUrl("javascript:refreshData()");
                                                 }
                                             });
+                                            Log.d("MyDebug", "force js执行完成");
                                         }
                                     });
+//                                    Log.d("MyDebug", "force部分结束");
                                 }
                                 buildReport(countPos, countAll, countTransE); // 整理报告，并显示
                             }
@@ -377,6 +403,21 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
         }
     }
+
+//    class ForceJSInterface {
+//        @JavascriptInterface // 解决版本不够问题
+//        public String getVertexArr() {
+//            return forceVertexArr;
+//        }
+//        @JavascriptInterface // 解决版本不够问题
+//        public String getArcArr() {
+//            return forceArcArr;
+//        }
+//        @JavascriptInterface // 解决版本不够问题
+//        public int getCount() {
+//            return countTransE;
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
@@ -579,20 +620,20 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         listView.setAdapter(cdItemAdapter);
     }
 
-    @Override
-    //设置回退
-    //覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && pieView.canGoBack()) {
-            pieView.goBack(); //goBack()表示返回WebView的上一页面
-            return true;
-        }
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && forceView.canGoBack()) {
-            forceView.goBack(); //goBack()表示返回WebView的上一页面
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    //设置回退
+//    //覆盖Activity类的onKeyDown(int keyCoder,KeyEvent event)方法
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if ((keyCode == KeyEvent.KEYCODE_BACK) && pieView.canGoBack()) {
+//            pieView.goBack(); //goBack()表示返回WebView的上一页面
+//            return true;
+//        }
+//        if ((keyCode == KeyEvent.KEYCODE_BACK) && forceView.canGoBack()) {
+//            forceView.goBack(); //goBack()表示返回WebView的上一页面
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
     //销毁Webview
     @Override

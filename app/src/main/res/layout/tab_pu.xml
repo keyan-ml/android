@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#eee">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:fillViewport="true"
-        android:scrollbars="none">
+    <!--<ScrollView-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:fillViewport="true"-->
+        <!--android:scrollbars="none">-->
 
         <!--正负例分布-->
         <LinearLayout
@@ -42,6 +43,6 @@
         </LinearLayout>
         <!--正负例分布-->
 
-    </ScrollView>
+    <!--</ScrollView>-->
 
 </LinearLayout>
