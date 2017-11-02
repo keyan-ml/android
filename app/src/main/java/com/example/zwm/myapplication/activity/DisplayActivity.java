@@ -41,6 +41,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayout tabCDLayout;
     private LinearLayout tabPULayout;
     private LinearLayout tabTransELayout;
+    private LinearLayout tabReportLayout;
     private LinearLayout cdLegendPos;
     private LinearLayout cdLegendNeg;
     private LinearLayout cdContainerView;
@@ -52,6 +53,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private WebView forceView;
     private LinearLayout pieViewLayout;
     private LinearLayout forceViewLayout;
+    private TextView reportView;
     // view
 
 
@@ -73,6 +75,11 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
     private String inputText;
     private String resultFromPU;
+    private boolean transESuccess;
+
+    private int countPos;
+    private int countAll;
+    private int countTransE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +104,18 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         tabCDLayout = (LinearLayout) findViewById(R.id.tab_cd);
         tabPULayout = (LinearLayout) findViewById(R.id.tab_pu);
         tabTransELayout = (LinearLayout) findViewById(R.id.tab_transe);
+        tabReportLayout = (LinearLayout) findViewById(R.id.tab_report);
 
         LayoutInflater inflater = getLayoutInflater(); // 将layout文件映射为view对象
         View tabCDView = inflater.inflate(R.layout.tab_cd, null);
         View tabPUView = inflater.inflate(R.layout.tab_pu, null);
         View tabTransEView = inflater.inflate(R.layout.tab_transe, null);
+        View tabReportView = inflater.inflate(R.layout.tab_report, null);
 
         viewList.add(tabCDView);
         viewList.add(tabPUView);
         viewList.add(tabTransEView);
+        viewList.add(tabReportView);
 
         // 创建adapter
         pagerAdapter = new PagerAdapter() {
@@ -152,6 +162,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         cdContainerView = (LinearLayout) tabCDView.findViewById(R.id.container_of_cd);
         pieViewLayout = (LinearLayout) tabPUView.findViewById(R.id.pie_web_view_layout);
         forceViewLayout = (LinearLayout) tabTransEView.findViewById(R.id.force_web_view_layout);
+        reportView = (TextView) tabReportView.findViewById(R.id.report_content);
         // 初始化View
 
         cdTextViewMap = new HashMap<Integer, TextView>();
@@ -168,6 +179,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         tabCDLayout.setOnClickListener(this);
         tabPULayout.setOnClickListener(this);
         tabTransELayout.setOnClickListener(this);
+        tabReportLayout.setOnClickListener(this);
 
         cdLegendPos.setOnClickListener(this);
         cdLegendNeg.setOnClickListener(this);
@@ -190,6 +202,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                         break;
                     case 2:
                         tabTransELayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
+                        break;
+                    case 3:
+                        tabReportLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 }
             }
 
@@ -204,6 +219,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 String[] partArr = resultFromPU.split("\\|");
                 countArr = partArr[0].split(" ");
                 positionOfPos = partArr[1];
+                countPos = Integer.parseInt(countArr[0].trim());
+                countAll = countPos + Integer.parseInt(countArr[1].trim());
 
                 layoutParamsOfcdContainer = (LinearLayout.LayoutParams) cdContainerView.getLayoutParams();
                 /**
@@ -312,13 +329,15 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
                         String result = HttpUtils.post(TRANSESERVLET_URL_PATH, postString); // 获取服务器返回信息
                         String[] pairs = result.split("\\|");
+                        countTransE = pairs.length;
 
                         if (pairs[0].equals("ERROR")) { // 服务器处理出错
                             transeErrorView.setText("没有符合条件的对象-属性元组!");
                             Log.d("MyDebug", "[TransE] Error!");
-                            return;
+                            transESuccess = false;
                         }
                         else { // 处理成功
+                            transESuccess = true;
                             String[] tempPairs = pairs[0].split(" ");
                             forceVertexArr = "[{category: 0, name: \'" + tempPairs[0] + "\', value: 20}, " +
                                             "{category: 1, name: \'" + tempPairs[1] + "\', value: 20}";
@@ -332,33 +351,33 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                             forceVertexArr += "]";
                             forceArcArr += "]";
                         }
-                            Log.d("MyDebug", "组装完成：\nvertexArr: " + forceVertexArr + "\narcArr: " + forceArcArr);
+                        Log.d("MyDebug", "组装完成：\nvertexArr: " + forceVertexArr + "\narcArr: " + forceArcArr);
 
                         runOnUiThread(new Runnable() { // 在UI主线程中执行显示View的操作
                             @Override
                             public void run() {
-                                transeErrorView.setHeight(0); // 隐藏错误信息显示区域
+                                if (transESuccess) {
+                                    transeErrorView.setHeight(0); // 隐藏错误信息显示区域
+                                    forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
+                                    forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
+                                    forceView.loadUrl("file:///android_asset/force.html"); // 加载需要显示的网页
+                                    forceView.setWebViewClient(new WebViewClient() {//设置Web视图
+                                        @Override
+                                        public void onPageFinished(WebView view, String url) {
+                                            super.onPageFinished(view, url);
 
-                                forceViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数，主要设置高度值
-                                forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
-                                forceView.loadUrl("file:///android_asset/force.html"); // 加载需要显示的网页
+                                            // 在这里执行你想调用的js函数
+                                            forceView.post(new Runnable() {
+                                                String callJs = "javascript:showforce(" + forceVertexArr + ", " + forceArcArr + ")";
 
-                                forceView.setWebViewClient(new WebViewClient() {//设置Web视图
-                                    @Override
-                                    public void onPageFinished(WebView view, String url) {
-                                        super.onPageFinished(view, url);
-
-                                        // 在这里执行你想调用的js函数
-                                        forceView.post(new Runnable() {
-                                            String callJs = "javascript:showforce(" + forceVertexArr + ", " + forceArcArr + ")";
-
-                                            public void run() {
-                                                forceView.loadUrl(callJs); // 执行js语句，显示force图
-                                            }
-                                        });
-                                    }
-
-                                });
+                                                public void run() {
+                                                    forceView.loadUrl(callJs); // 执行js语句，显示force图
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                                buildReport(countPos, countAll, countTransE); // 整理报告，并显示
                             }
                         });
 
@@ -396,6 +415,10 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 tabTransELayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
                 viewPager.setCurrentItem(2);
                 break;
+            case R.id.tab_report:
+                tabReportLayout.setBackgroundColor(Color.parseColor(TAB_SELECTED_COLOR));
+                viewPager.setCurrentItem(3);
+                break;
             case R.id.cd_legend_pos:
 
         }
@@ -405,6 +428,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         tabCDLayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
         tabPULayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
         tabTransELayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
+        tabReportLayout.setBackgroundColor(Color.parseColor(TAB_NORMAL_COLOR));
     }
 
     private void showAllSents() {
@@ -427,4 +451,10 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 //    private void showNeg() {
 //
 //    }
+
+    private void buildReport(int countPos, int countAll, int countTransT) {
+        String persentInfoStr = String.format("%.2f",  (float) countPos * 100 / countAll ) + "%";
+        reportView.setText("这篇文章总共有 " + countPos + " 个负面句子，" +
+                "占百分比 " + persentInfoStr + "。\n从中抽取出共 " + countTransT + " 组属性信息。");
+    }
 }

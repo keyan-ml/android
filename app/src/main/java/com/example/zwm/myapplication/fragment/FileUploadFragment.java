@@ -206,7 +206,7 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
 
                             BufferedWriter bufw = new BufferedWriter(new FileWriter(RESULE_FILE_PATH + "/result.txt"));
 
-                            bufw.write("# PU-Learning");
+                            bufw.write("# 分类结果");
                             bufw.flush();
                             bufw.newLine();
                             for (String sent : sents) {
@@ -221,7 +221,7 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
                                 bufw.newLine();
                                 bufw.newLine();
                                 bufw.newLine();
-                                bufw.write("# TransE");
+                                bufw.write("# 细粒度抽取结果");
                                 bufw.flush();
                                 bufw.newLine();
 
