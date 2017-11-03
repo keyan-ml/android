@@ -233,38 +233,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 countPos = Integer.parseInt(countArr[0].trim());
                 countAll = countPos + Integer.parseInt(countArr[1].trim());
 
-                showAll();
-//                // 分类标注
-//                String[] sentArr = inputText.toString().split("[。！？]"); // 分句
-//                for (int i = 0; i < sentArr.length; i++) {
-//                    Map<String, String> map = new HashMap<String, String>();
-//                    map.put("type", "neg");
-//                    map.put("text", sentArr[i]);
-//                    list.add(map);
-//                }
-//                if (!positionOfPos.equals("")) { // 有负面信息
-//                    positionArr = positionOfPos.split(" ");
-//                    for (int i = 0; i < positionArr.length; i++) {
-//                        int index = Integer.parseInt(positionArr[i]);
-//                        Map<String, String> map = list.get(index);
-//                        map.put("type", "pos");
-//                        list.remove(index);
-//                        list.add(index, map);
-//                    }
-//                }
-//                int a = 0;
-//                while (a < list.size()) {
-//                    Map<String, String> map = list.get(a);
-//                    if (map.get("text").equals("")) {
-//                        list.remove(a);
-//                    }
-//                    else {
-//                        a++;
-//                    }
-//                }
-//                cdItemAdapter = new CdItemAdapter(this, list);
-//                listView.setAdapter(cdItemAdapter);
-//                // 分类标注
+                showAll(); // 分类标注
 
                 /**
                  * 饼图
@@ -281,25 +250,10 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 puErrorView.setHeight(0); // 隐藏错误信息显示区域
 //                pieViewLayout.setLayoutParams( layoutParamsOfViewLayout ); // 设置Layout布局参数
                 pieView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
-                pieView.loadUrl("file:///android_asset/pie.html"); // 加载需要显示的网页
+//                pieView.loadUrl("file:///android_asset/pie.html"); // 加载需要显示的网页
+                pieView.loadUrl("http://182.254.247.94:8080/KeyanWeb/display.html"); // 加载需要显示的网页
                 //设置Web视图
-                pieView.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public void onPageFinished(WebView view, String url) {
-                        super.onPageFinished(view, url);
-//                        String callJs = "javascript:showpie([{value: " + countArr[0] + ",name: '负面', selected:false},{value: " + countArr[1] + ",name: '正面'}])";
-//                        pieView.loadUrl(callJs); // 执行js语句
-
-                        //在这里执行你想调用的js函数
-                        pieView.post(new Runnable() {
-                            String callJs = "javascript:showpie([{value: " + countArr[0] + ",name: '负面', selected:false},{value: " + countArr[1] + ",name: '正面'}])";
-
-                            public void run() {
-                                pieView.loadUrl(callJs); // 执行js语句
-                            }
-                        });
-                    }
-                });
+                pieView.setWebViewClient(new WebViewClient(){});
                 // 饼图
 
                 /**
