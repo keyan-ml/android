@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
+import com.example.zwm.myapplication.model.PublicVariable;
 import com.example.zwm.myapplication.model.SignInStatus;
 import com.example.zwm.myapplication.util.HttpUtils;
 
@@ -80,6 +81,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             MainActivity.instance.finish();
             MainActivity.instance = null;
         }
+
+        PublicVariable.sessionid = null;
 
         signInButton.setOnClickListener(this);
         signInDefault.setOnClickListener(this);
@@ -190,19 +193,38 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 }.start();
                 break;
             case R.id.sign_in_default_user:
-                SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
-                spEditor.putString("uname", "DefaultUser");
-                spEditor.putString("uemailaddress", "none");
-                spEditor.putString("upassword", "none");
-                spEditor.putString("uorganization", "");
-                spEditor.putString("ucontactway", "");
-                spEditor.commit();
-                SignInStatus.hasSignedIn = false;
-                Log.d("MyDebug", "游客登录");
+                new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+                        String postString = "postreason=DefaultUser" +
+                                "&uemailaddress=" + uemailaddress +
+                                "&upassword=" + upassword;
+                        resultFromPost = HttpUtils.post(SIGN_IN_URL, postString);
+                        if (resultFromPost == null || resultFromPost.contains("failed")) {
+                            //
+                        }
+                        else {
+                            SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
+                            spEditor.putString("uname", "DefaultUser");
+                            spEditor.putString("uemailaddress", "none");
+                            spEditor.putString("upassword", "none");
+                            spEditor.putString("uorganization", "");
+                            spEditor.putString("ucontactway", "");
+                            spEditor.commit();
+//                            spEditor = getSharedPreferences("Cookie", Context.MODE_PRIVATE).edit();
+//                            spEditor.putString("id", resultFromPost.trim());
+//                            spEditor.commit();
+                            PublicVariable.sessionid = resultFromPost.trim();
+                            SignInStatus.hasSignedIn = false;
+                            Log.d("MyDebug", "游客登录");
 
-                Intent intentDefault = new Intent();
-                intentDefault.setClass(SignInActivity.this, MainActivity.class);
-                startActivity(intentDefault);
+                            Intent intentDefault = new Intent();
+                            intentDefault.setClass(SignInActivity.this, MainActivity.class);
+                            startActivity(intentDefault);
+                        }
+                    }
+                }.start();
                 break;
             case R.id.sign_in_forget_password:
                 Intent intentForgetPw = new Intent();

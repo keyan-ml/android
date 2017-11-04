@@ -3,6 +3,8 @@ package com.example.zwm.myapplication.util;
 
 import android.util.Log;
 
+import com.example.zwm.myapplication.model.PublicVariable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +28,16 @@ public class HttpUtils {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Charset", "UTF-8");
+//            String cookieval = conn.getHeaderField("set-cookie");
+//            String sessionid = null;
+//            if (cookieval != null) {
+//                sessionid = cookieval.substring(0, cookieval.indexOf(";"));
+//                Log.d("MyDebug", "sessionid: " + sessionid);
+//            }
+//            if (sessionid != null) {
+//                conn.setRequestProperty("cookie", sessionid);
+//                Log.d("MyDebug", "request中设置sessionid: " + sessionid);
+//            }
 
             if(conn.getResponseCode() == 200){
                 InputStream is = conn.getInputStream();
@@ -58,6 +70,16 @@ public class HttpUtils {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Charset", "UTF-8");
+//            String cookieval = conn.getHeaderField("Set-Cookie");
+//            String sessionid = null;
+//            if (cookieval != null) {
+//                sessionid = cookieval.substring(0, cookieval.indexOf(";"));
+//                Log.d("MyDebug", "sessionid: " + sessionid);
+//            }
+            if (PublicVariable.sessionid != null) {
+                conn.setRequestProperty("Cookie", "JSESSIONID=" + PublicVariable.sessionid);
+                Log.d("MyDebug", "request中设置sessionid: " + PublicVariable.sessionid);
+            }
 
             // 设置请求的超时时间
             conn.setReadTimeout(5000);

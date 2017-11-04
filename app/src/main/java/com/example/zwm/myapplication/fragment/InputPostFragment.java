@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.activity.DisplayActivity;
+import com.example.zwm.myapplication.model.PublicVariable;
 import com.example.zwm.myapplication.util.HttpUtils;
 import com.example.zwm.myapplication.util.InputTextDBHelper;
 
@@ -31,8 +32,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class InputPostFragment extends Fragment {
-    private static final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWeb";
-    private static final String PUSERVLET_URL_PATH = ROOT_URL_PATH + "/puservlet";
+//    private final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWebBeta";
+    private final String ROOT_URL_PATH = PublicVariable.ROOT_URL_PATH;
+    private final String PUSERVLET_URL_PATH = ROOT_URL_PATH + "/puservlet";
+    private final String TRANSESERVLET_URL_PATH = ROOT_URL_PATH + "/transeservlet";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private EditText inputTextView;
@@ -41,7 +44,10 @@ public class InputPostFragment extends Fragment {
 
     private String inputText;
     private String postInfo;
+    private String positionOfPos;
+    private String transESents;
     private String resultFromPU;
+    private String resultFromTransE;
     private LinearLayout linearLayoutOfCD;
 
     private InputTextDBHelper dbHelper;
@@ -81,6 +87,7 @@ public class InputPostFragment extends Fragment {
                         errorInfoView.setText("请输入文本！");
                         return;
                     }
+                    errorInfoView.setText("正在分析，请稍候！");
                     postInfo = "sents=" + inputText;
                     SharedPreferences.Editor spEditor = activity.getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
                     spEditor.putString("inputtext", inputTextView.getText().toString()); // 保存当前用户最近一次输入的分析文本
@@ -90,11 +97,22 @@ public class InputPostFragment extends Fragment {
                         @Override
                         public void run() {
                             try {
-                                // 将输入文本发送至服务器，取得分析结果
-                                resultFromPU = HttpUtils.post(PUSERVLET_URL_PATH, postInfo);
-                                // 将输入文本发送至服务器，取得分析结果
+                                resultFromPU = HttpUtils.post(PUSERVLET_URL_PATH, postInfo); // 将输入文本发送至服务器，取得分析结果
+                                String[] partArr = resultFromPU.split("\\|");
+                                positionOfPos = partArr[1];
+                                String[] sents = inputText.trim().split("[。！？]");
+                                String[] positions = positionOfPos.trim().split(" ");
+                                transESents = "";
+                                for (int i = 0; i < positions.length; i++) {
+                                    String str = sents[ Integer.parseInt(positions[i]) ].trim();
+                                    if (!str.equals("")) {
+                                        transESents += str + "。";
+                                    }
+                                }
+                                String postString = "sents=" + transESents;
+                                resultFromTransE = HttpUtils.post(TRANSESERVLET_URL_PATH, postString);
 
-                                if (resultFromPU != null) { // 获得分析结果
+                                if (resultFromPU != null && resultFromTransE != null) { // 获得分析结果
                                     // 输入文本存入数据库
                                     SharedPreferences sp = activity.getSharedPreferences("UserInFo", Context.MODE_PRIVATE);
                                     SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -106,11 +124,18 @@ public class InputPostFragment extends Fragment {
                                     db.close();
                                     Log.d("MyDebug", "保存了");
 
+                                    activity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            errorInfoView.setText("");
+                                        }
+                                    });
                                     // 将输入文本和分析结果传送至 DisplayActivity 活动中，并启动该活动
                                     Intent intentForDisplayActivity = new Intent();
                                     intentForDisplayActivity.setClass(getActivity(), DisplayActivity.class);
-                                    intentForDisplayActivity.putExtra("inputText", inputTextView.getText().toString());
+//                                    intentForDisplayActivity.putExtra("inputText", inputTextView.getText().toString());
                                     intentForDisplayActivity.putExtra("resultFromPU", resultFromPU);
+                                    intentForDisplayActivity.putExtra("resultFromTransE", resultFromTransE);
                                     startActivity(intentForDisplayActivity);
                                     // 将分析结果传送至 DisplayActivity 活动中，并启动该活动
                                 }
@@ -125,6 +150,13 @@ public class InputPostFragment extends Fragment {
                                     Log.d("MyDebug", "请求服务器出错");
                                     // 服务器出问题了
                                 }
+                            } catch (NumberFormatException e) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        errorInfoView.setText("处理出错！");
+                                    }
+                                });
                             } catch (Exception e) {
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
