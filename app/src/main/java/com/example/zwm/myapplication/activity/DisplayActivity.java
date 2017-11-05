@@ -247,6 +247,12 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 pieView.loadUrl(PIE_HTML); // 加载需要显示的网页//设置Web视图
                 pieView.setWebViewClient(new WebViewClient() {
                     @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                        view.loadUrl(url);
+                        return true;
+                    }
+
+                    @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
                         puErrorView.setText("正在加载，请稍候！");
                     }

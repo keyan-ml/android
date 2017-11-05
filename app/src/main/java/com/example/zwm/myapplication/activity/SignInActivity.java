@@ -118,8 +118,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         super.run();
 
                         try {
-                            String postString = "uemailaddress=" + uemailaddress
-                                    + "&upassword=" + upassword;
+                            String postString = "postReason=SignInNormally" +
+                                    "&uemailaddress=" + uemailaddress +
+                                    "&upassword=" + upassword;
                             resultFromPost = HttpUtils.post(SIGN_IN_URL, postString);
                             Log.d("MyDebug", "[result]: " + resultFromPost);
                             // 返回信息中有"failed"，为出错，具体错误需再次判断
@@ -166,6 +167,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                         else { // 获取成功，设置对应显示
                                             final String[] userInfoArr = resultFromPost.split("\\|");
                                             if (userInfoArr[0].contains("success")) { // 获取成功
+                                                errorInfoView.setText("登录成功");
+                                                try {
+                                                    Thread.sleep(500);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                                 SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
                                                 spEditor.putString("uname", userInfoArr[1]);
                                                 spEditor.putString("uemailaddress", uemailaddress);
