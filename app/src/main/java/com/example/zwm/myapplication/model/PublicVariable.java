@@ -5,6 +5,6 @@ package com.example.zwm.myapplication.model;
  */
 
 public class PublicVariable {
-    public static final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWeb";
+    public static final String URL_ROOT_PATH = "http://182.254.247.94:8080/KeyanWeb";
     public static String sessionid = null;
 }

@@ -3,24 +3,19 @@ package com.example.zwm.myapplication.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.activity.DisplayActivity;
@@ -32,8 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class InputPostFragment extends Fragment {
-//    private final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWebBeta";
-    private final String ROOT_URL_PATH = PublicVariable.ROOT_URL_PATH;
+//    private final String URL_ROOT_PATH = "http://182.254.247.94:8080/KeyanWebBeta";
+    private final String ROOT_URL_PATH = PublicVariable.URL_ROOT_PATH;
     private final String PUSERVLET_URL_PATH = ROOT_URL_PATH + "/puservlet";
     private final String TRANSESERVLET_URL_PATH = ROOT_URL_PATH + "/transeservlet";
     public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -88,7 +83,8 @@ public class InputPostFragment extends Fragment {
                         return;
                     }
                     errorInfoView.setText("正在分析，请稍候！");
-                    postInfo = "sents=" + inputText;
+                    postInfo = "myId=" + PublicVariable.sessionid +
+                            "&sents=" + inputText;
                     SharedPreferences.Editor spEditor = activity.getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
                     spEditor.putString("inputtext", inputTextView.getText().toString()); // 保存当前用户最近一次输入的分析文本
                     spEditor.commit();
@@ -109,7 +105,8 @@ public class InputPostFragment extends Fragment {
                                         transESents += str + "。";
                                     }
                                 }
-                                String postString = "sents=" + transESents;
+                                String postString = "myId=" + PublicVariable.sessionid +
+                                        "&sents=" + transESents;
                                 resultFromTransE = HttpUtils.post(TRANSESERVLET_URL_PATH, postString);
 
                                 if (resultFromPU != null && resultFromTransE != null) { // 获得分析结果

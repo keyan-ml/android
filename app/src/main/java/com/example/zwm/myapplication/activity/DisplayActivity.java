@@ -1,6 +1,5 @@
 package com.example.zwm.myapplication.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,13 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,14 +26,13 @@ import com.example.zwm.myapplication.model.PublicVariable;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DisplayActivity extends AppCompatActivity implements View.OnClickListener {
-//    private final String ROOT_URL_PATH = "http://182.254.247.94:8080/KeyanWebBeta";
-    private final String ROOT_URL_PATH = PublicVariable.ROOT_URL_PATH;
-//    private final String TRANSESERVLET_URL_PATH = ROOT_URL_PATH + "/transeservlet";
+    private final String ROOT_URL_PATH = PublicVariable.URL_ROOT_PATH;
+    private final String ANDROID_ECHARTS_SERVLET_URL = ROOT_URL_PATH + "/androidecharts";
+//    private final String TRANSESERVLET_URL_PATH = URL_ROOT_PATH + "/transeservlet";
     private final String PIE_HTML = ROOT_URL_PATH + "/android/pie.html";
     private final String FORCE_HTML = ROOT_URL_PATH + "/android/force.html";
     private final String TAB_NORMAL_COLOR = "#bbe4fb";
@@ -94,9 +88,11 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private String[] sentArr;
     private boolean transESuccess;
 
-    private int countPos;
-    private int countAll;
-    private int countTransE;
+//    private int countPos;
+//    private int countAll;
+//    private int countTransE;
+
+    private String reportContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,8 +235,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 String[] partArr = resultFromPU.split("\\|"); // 饼图
                 countArr = partArr[0].split(" ");
                 positionOfPos = partArr[1];
-                countPos = Integer.parseInt(countArr[0].trim());
-                countAll = countPos + Integer.parseInt(countArr[1].trim());
+//                countPos = Integer.parseInt(countArr[0].trim());
+//                countAll = countPos + Integer.parseInt(countArr[1].trim());
 
                 pieView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
                 pieView.addJavascriptInterface(new JsObject(), "androidJsObject");
@@ -254,12 +250,29 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        puErrorView.setText("正在加载，请稍候！");
+                        puErrorView.setText("正在加载... 请稍候！");
                     }
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
-                        puErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
+                        puErrorView.setText("加载完成！");
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+                                try {
+                                    Thread.sleep(1000);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            puErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
                     }
                 });
                 // 饼图
@@ -272,24 +285,58 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 forceView.setWebViewClient(new WebViewClient(){
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        transeErrorView.setText("正在加载，请稍候！");
+                        transeErrorView.setText("正在加载... 请稍候！");
                     }
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         transeErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
+                        transeErrorView.setText("加载完成！");
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+                                try {
+                                    Thread.sleep(1000);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            transeErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
                     }
                 });
                 // 细粒度
 
-                String[] parts = resultFromTransE.split("\\|"); // 报告
-                if (parts[0].contains("ERROR")) {
-                    countTransE = 0;
-                }
-                else {
-                    countTransE = parts.length;
-                }
-                buildReport(countPos, countAll, countTransE); // 整理报告，并显示
+//                String[] parts = resultFromTransE.split("\\|"); // 报告
+//                if (parts[0].contains("ERROR")) {
+//                    countTransE = 0;
+//                }
+//                else {
+//                    countTransE = parts.length;
+//                }
+//                buildReport(countPos, countAll, countTransE); // 整理报告，并显示
+                new Thread(){ // 报告
+                    @Override
+                    public void run() {
+                        super.run();
+
+                        String postString = "myId=" + PublicVariable.sessionid +
+                                "&postReason=getReport";
+                        reportContent = HttpUtils.post(ANDROID_ECHARTS_SERVLET_URL, postString);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                reportView.setText(reportContent);
+                            }
+                        });
+                    }
+                }.start(); // 报告
             }
         } catch (Exception e) {
             //
@@ -545,11 +592,11 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    private void buildReport(int countPos, int countAll, int countTransT) {
-        String persentInfoStr = String.format("%.2f",  (float) countPos * 100 / countAll ) + "%";
-        reportView.setText("这篇文章总共有 " + countPos + " 个负面句子，" +
-                "占百分比 " + persentInfoStr + "。\n从中抽取出共 " + countTransT + " 组属性信息。");
-    }
+//    private void buildReport(int countPos, int countAll, int countTransT) {
+//        String persentInfoStr = String.format("%.2f",  (float) countPos * 100 / countAll ) + "%";
+//        reportView.setText("这篇文章总共有 " + countPos + " 个负面句子，" +
+//                "占百分比 " + persentInfoStr + "。\n从中抽取出共 " + countTransT + " 组属性信息。");
+//    }
 
 //    class CdItemAdapter extends BaseAdapter {
 //        private List<Map<String, String>> data;

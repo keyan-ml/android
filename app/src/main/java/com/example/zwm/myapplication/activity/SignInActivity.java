@@ -209,7 +209,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 "&upassword=" + upassword;
                         resultFromPost = HttpUtils.post(SIGN_IN_URL, postString);
                         if (resultFromPost == null || resultFromPost.contains("failed")) {
-                            //
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    errorInfoView.setText("登录失败！");
+                                }
+                            });
                         }
                         else {
                             SharedPreferences.Editor spEditor = getSharedPreferences("UserInFo", Context.MODE_PRIVATE).edit();
