@@ -118,7 +118,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         super.run();
 
                         try {
-                            String postString = "postReason=SignInNormally" +
+                            String postString = "postreason=SignInNormally" +
                                     "&uemailaddress=" + uemailaddress +
                                     "&upassword=" + upassword;
                             resultFromPost = HttpUtils.post(SIGN_IN_URL, postString);
@@ -151,10 +151,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 });
 
                             }
-                            // 返回信息中不含有"failed"字样，说明登录成功
-                            else {
-                                // 获取该邮箱所对应的个人信息
-                                postString = "postreason=get&uemailaddress=" + uemailaddress;
+                            else {// 返回信息中不含有"failed"字样，说明登录成功
+                                PublicVariable.sessionid = resultFromPost.trim();
+                                postString = "postreason=get&uemailaddress=" + uemailaddress;// 获取该邮箱所对应的个人信息
                                 resultFromPost = HttpUtils.post(MODIFYUSERINFO_SERVLET_URL, postString);
                                 Log.d("MyDebug", resultFromPost);
                                 runOnUiThread(new Runnable() {
@@ -181,6 +180,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                                 spEditor.putString("ucontactway", userInfoArr[3]);
                                                 spEditor.commit();
                                                 SignInStatus.hasSignedIn = true;
+                                                Log.d("MyDebug", "用户登录" + PublicVariable.sessionid);
                                                 Intent intent = new Intent();
                                                 intent.setClass(SignInActivity.this, MainActivity.class);
                                                 startActivity(intent);
@@ -229,7 +229,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 //                            spEditor.commit();
                             PublicVariable.sessionid = resultFromPost.trim();
                             SignInStatus.hasSignedIn = false;
-                            Log.d("MyDebug", "游客登录");
+                            Log.d("MyDebug", "游客登录" + resultFromPost);
 
                             Intent intentDefault = new Intent();
                             intentDefault.setClass(SignInActivity.this, MainActivity.class);

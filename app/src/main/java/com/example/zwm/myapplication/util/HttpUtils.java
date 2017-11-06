@@ -106,7 +106,7 @@ public class HttpUtils {
 //                    sb.append(new String(buf, 0, len));
 //                }
                 InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-                char[] buf = new char[128];
+                char[] buf = new char[1024];
                 while ((len = isr.read(buf)) != -1) {
                     sb.append(new String(buf, 0, len));
                 }

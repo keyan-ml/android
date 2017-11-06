@@ -329,7 +329,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                         if (!reportContent.equals("null")) {
                             String[] carItems = reportContent.split("\\|");
                             for (String item : carItems) {
-                                Log.d("MyDebug", item);
+//                                Log.d("MyDebug", item);
                                 String[] parts = item.split("&&");
                                 Report report = new Report();
                                 report.setImgDrawable(R.drawable.audi); // 图片
