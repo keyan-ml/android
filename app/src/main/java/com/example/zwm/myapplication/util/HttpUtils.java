@@ -7,6 +7,7 @@ import com.example.zwm.myapplication.model.PublicVariable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -100,10 +101,17 @@ public class HttpUtils {
                 InputStream is = conn.getInputStream();
                 StringBuilder sb = new StringBuilder();
                 int len = 0;
-                byte[] buf = new byte[128];
-                while((len = is.read(buf)) != -1) {
+//                byte[] buf = new byte[128];
+//                while((len = is.read(buf)) != -1) {
+//                    sb.append(new String(buf, 0, len));
+//                }
+                InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+                char[] buf = new char[128];
+                while ((len = isr.read(buf)) != -1) {
                     sb.append(new String(buf, 0, len));
                 }
+                is.close();
+                isr.close();
                 return sb.toString();
             }
 

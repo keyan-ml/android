@@ -1,5 +1,6 @@
 package com.example.zwm.myapplication.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,11 +25,11 @@ import android.widget.TextView;
 
 import com.example.zwm.myapplication.R;
 import com.example.zwm.myapplication.model.PublicVariable;
+import com.example.zwm.myapplication.model.Report;
 import com.example.zwm.myapplication.util.HttpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DisplayActivity extends AppCompatActivity implements View.OnClickListener {
     private final String ROOT_URL_PATH = PublicVariable.URL_ROOT_PATH;
@@ -54,9 +56,9 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 //    private LinearLayout cdLegendPos;
 //    private LinearLayout cdLegendNeg;
 
-    private ListView listView;
-    private List<Map<String, String>> list;
-//    private CdItemAdapter cdItemAdapter;
+    private ListView reportListView;
+    private List<Report> reportList;
+    private ReportItemAdapter reportItemAdapter;
     private boolean posHasShowed;
     private boolean negHasShowed;
 
@@ -67,7 +69,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
     private WebView forceView;
     private LinearLayout pieViewLayout;
     private LinearLayout forceViewLayout;
-    private TextView reportView;
+//    private TextView reportView;
     // view
 
 
@@ -179,7 +181,10 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
         pieViewLayout = (LinearLayout) tabPUView.findViewById(R.id.pie_web_view_layout);
         forceViewLayout = (LinearLayout) tabTransEView.findViewById(R.id.force_web_view_layout);
-        reportView = (TextView) tabReportView.findViewById(R.id.report_content);
+//        reportView = (TextView) tabReportView.findViewById(R.id.report_content);
+        reportListView = (ListView) tabReportView.findViewById(R.id.report_list_view);
+        reportList = new ArrayList<Report>();
+
         // 初始化View
 
         posHasShowed = true;
@@ -313,14 +318,6 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 });
                 // 细粒度
 
-//                String[] parts = resultFromTransE.split("\\|"); // 报告
-//                if (parts[0].contains("ERROR")) {
-//                    countTransE = 0;
-//                }
-//                else {
-//                    countTransE = parts.length;
-//                }
-//                buildReport(countPos, countAll, countTransE); // 整理报告，并显示
                 new Thread(){ // 报告
                     @Override
                     public void run() {
@@ -329,10 +326,36 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                         String postString = "myId=" + PublicVariable.sessionid +
                                 "&postReason=getReport";
                         reportContent = HttpUtils.post(ANDROID_ECHARTS_SERVLET_URL, postString);
+                        if (!reportContent.equals("null")) {
+                            String[] carItems = reportContent.split("\\|");
+                            for (String item : carItems) {
+                                Log.d("MyDebug", item);
+                                String[] parts = item.split("&&");
+                                Report report = new Report();
+                                report.setImgDrawable(R.drawable.audi); // 图片
+                                report.setCarType(parts[0]); // 车型
+//                                String[] shortingArr = parts[1].split("&"); // 组织缺点
+//                                String shortingStr = "";
+//                                for (int i = 0; i < shortingArr.length; i++) {
+//                                    shortingStr += shortingArr[i] + " ";
+//                                }
+//                                report.setShorting(shortingStr); // 缺点
+                                report.setShorting(parts[1]); // 缺点
+                                report.setSummary(parts[2]); // 总结
+                                reportList.add(report);
+                            }
+                            reportItemAdapter = new ReportItemAdapter(DisplayActivity.this, reportList);
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                reportView.setText(reportContent);
+//                                reportView.setText(reportContent);
+                                if (reportContent.equals("null")) {
+                                    //
+                                }
+                                else {
+                                    reportListView.setAdapter(reportItemAdapter);
+                                }
                             }
                         });
                     }
@@ -591,6 +614,45 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         super.onDestroy();
     }
 
+    class ReportItemAdapter extends BaseAdapter {
+        private List<Report> data;
+        private LayoutInflater layoutInflater;
+        private Context context;
+
+        public ReportItemAdapter(Context context, List<Report> data) {
+            //传入的data，就是我们要在listview中显示的信息
+            this.context = context;
+            this.data = data;
+            this.layoutInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public int getCount() {
+            return data.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return data.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            Report reportItem = data.get(i);
+            view = layoutInflater.inflate(R.layout.tab_report_item, null);
+            ((ImageView) view.findViewById(R.id.report_item_img)).setImageResource(reportItem.getImgDrawable());
+            ((TextView) view.findViewById(R.id.report_item_car_type)).setText(reportItem.getCarType());
+            ((TextView) view.findViewById(R.id.report_item_shorting)).setText(reportItem.getShorting());
+            ((TextView) view.findViewById(R.id.report_item_summary)).setText(reportItem.getSummary());
+
+            return view;
+        }
+    }
 
 //    private void buildReport(int countPos, int countAll, int countTransT) {
 //        String persentInfoStr = String.format("%.2f",  (float) countPos * 100 / countAll ) + "%";
