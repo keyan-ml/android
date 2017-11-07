@@ -46,10 +46,10 @@
                     android:textColor="#000"
                     android:textSize="20sp"/>
             </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_weight="1"/>-->
         </LinearLayout>
     </LinearLayout>
 
@@ -134,5 +134,13 @@
             android:paddingRight="10dp"/>
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0.05dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="#888"/>
 
 </LinearLayout>
