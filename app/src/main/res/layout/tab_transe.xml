@@ -23,8 +23,9 @@
             <TextView
                 android:id="@+id/transe_error_info"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:gravity="center"
+                android:hint="提示信息"
                 android:textColor="#ff0000"/>
             <LinearLayout
                 android:id="@+id/force_web_view_layout"

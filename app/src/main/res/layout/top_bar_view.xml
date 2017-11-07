@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="正负例分布"
+            android:text="情感分布"
             android:textColor="#000"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="细粒度"
+            android:text="层面挖掘"
             android:textColor="#000"
             android:textSize="16sp"/>
     </LinearLayout>

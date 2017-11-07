@@ -49,27 +49,20 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
     // view
     private ImageView backView;
-//    private LinearLayout tabCDLayout;
     private LinearLayout tabPULayout;
     private LinearLayout tabTransELayout;
     private LinearLayout tabReportLayout;
-//    private LinearLayout cdLegendPos;
-//    private LinearLayout cdLegendNeg;
 
     private ListView reportListView;
     private List<Report> reportList;
     private ReportItemAdapter reportItemAdapter;
-    private boolean posHasShowed;
-    private boolean negHasShowed;
 
     private TextView puErrorView;
     private TextView transeErrorView;
+    private TextView reportErrorView;
 
     private WebView pieView;
     private WebView forceView;
-    private LinearLayout pieViewLayout;
-    private LinearLayout forceViewLayout;
-//    private TextView reportView;
     // view
 
 
@@ -77,23 +70,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
     private LinearLayout.LayoutParams layoutParamsOfViewLayout;
 
-    private String[] countArr;
-    private String positionOfPos;
-    private String[] positionArr;
-
-    private String forceVertexArr;
-    private String forceArcArr;
-
-    private String inputText;
     private String resultFromPU;
     private String resultFromTransE;
-    private String[] sentArr;
-    private boolean transESuccess;
-
-//    private int countPos;
-//    private int countAll;
-//    private int countTransE;
-
     private String reportContent;
 
     @Override
@@ -170,6 +148,7 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         // 初始化View
         puErrorView = (TextView) tabPUView.findViewById(R.id.pu_error_info);
         transeErrorView = (TextView) tabTransEView.findViewById(R.id.transe_error_info);
+        reportErrorView = (TextView) tabReportView.findViewById(R.id.report_error_info);
 
         pieView = (WebView) tabPUView.findViewById(R.id.pie_web_view);
         forceView = (WebView) tabTransEView.findViewById(R.id.force_web_view);
@@ -179,16 +158,16 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 //        listView = (ListView) tabCDView.findViewById(R.id.container_of_cd);
 //        list = new ArrayList<Map<String, String>>();
 
-        pieViewLayout = (LinearLayout) tabPUView.findViewById(R.id.pie_web_view_layout);
-        forceViewLayout = (LinearLayout) tabTransEView.findViewById(R.id.force_web_view_layout);
+//        pieViewLayout = (LinearLayout) tabPUView.findViewById(R.id.pie_web_view_layout);
+//        forceViewLayout = (LinearLayout) tabTransEView.findViewById(R.id.force_web_view_layout);
 //        reportView = (TextView) tabReportView.findViewById(R.id.report_content);
         reportListView = (ListView) tabReportView.findViewById(R.id.report_list_view);
         reportList = new ArrayList<Report>();
 
         // 初始化View
 
-        posHasShowed = true;
-        negHasShowed = true;
+//        posHasShowed = true;
+//        negHasShowed = true;
     }
 
     private void initEvents() {
@@ -238,8 +217,8 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
         try {
             if (resultFromPU != null && !resultFromPU.equals("null")) { // 处理成功且成功返回
                 String[] partArr = resultFromPU.split("\\|"); // 饼图
-                countArr = partArr[0].split(" ");
-                positionOfPos = partArr[1];
+//                countArr = partArr[0].split(" ");
+//                positionOfPos = partArr[1];
 //                countPos = Integer.parseInt(countArr[0].trim());
 //                countAll = countPos + Integer.parseInt(countArr[1].trim());
 
@@ -282,41 +261,46 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
                 });
                 // 饼图
 
-                Log.d("MyDebug", "force部分开始");
-//                forceView.getSettings().setAllowFileAccess(true); // 细粒度
-                forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
-                forceView.addJavascriptInterface(new JsObject(), "androidJsObjectForce");
-                forceView.loadUrl(FORCE_HTML); // 加载需要显示的网页
-                forceView.setWebViewClient(new WebViewClient(){
-                    @Override
-                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        transeErrorView.setText("正在加载... 请稍候！");
-                    }
+                Log.d("MyDebug", "force部分开始"); // 细粒度
+                if (resultFromTransE.contains("ERROR")) { // 细粒度
+                    transeErrorView.setText("no data!");
+                }
+                else {
+//                forceView.getSettings().setAllowFileAccess(true);
+                    forceView.getSettings().setJavaScriptEnabled(true); // 设置WebView属性，能够执行Javascript脚本
+                    forceView.addJavascriptInterface(new JsObject(), "androidJsObjectForce");
+                    forceView.loadUrl(FORCE_HTML); // 加载需要显示的网页
+                    forceView.setWebViewClient(new WebViewClient(){
+                        @Override
+                        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                            transeErrorView.setText("正在加载... 请稍候！");
+                        }
 
-                    @Override
-                    public void onPageFinished(WebView view, String url) {
-                        transeErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
-                        transeErrorView.setText("加载完成！");
-                        new Thread(){
-                            @Override
-                            public void run() {
-                                super.run();
-                                try {
-                                    Thread.sleep(1000);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            transeErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
-                                        }
-                                    });
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                        @Override
+                        public void onPageFinished(WebView view, String url) {
+                            transeErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
+                            transeErrorView.setText("加载完成！");
+                            new Thread(){
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    try {
+                                        Thread.sleep(1000);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                transeErrorView.setVisibility(View.INVISIBLE); // 隐藏错误信息显示区域
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
-                        }.start();
-                    }
-                });
-                // 细粒度
+                            }.start();
+                        }
+                    });
+                } // 细粒度
+
 
                 new Thread(){ // 报告
                     @Override
@@ -325,14 +309,45 @@ public class DisplayActivity extends AppCompatActivity implements View.OnClickLi
 
                         String postString = "myId=" + PublicVariable.sessionid +
                                 "&postReason=getReport";
-                        reportContent = HttpUtils.post(ANDROID_ECHARTS_SERVLET_URL, postString);
-                        if (!reportContent.equals("null")) {
+                        reportContent = HttpUtils.post(ANDROID_ECHARTS_SERVLET_URL, postString).trim();
+                        if (reportContent.equals("null")) {
+                            reportErrorView.setText("没有可阅读的报告！");
+                        }
+                        else {
+                            reportErrorView.setVisibility(View.INVISIBLE);
                             String[] carItems = reportContent.split("\\|");
                             for (String item : carItems) {
 //                                Log.d("MyDebug", item);
                                 String[] parts = item.split("&&");
                                 Report report = new Report();
-                                report.setImgDrawable(R.drawable.audi); // 图片
+                                int imgDrawable = 0; // 找图片
+                                switch (parts[0]) {
+                                    case "奥迪":
+                                        imgDrawable = R.drawable.audi;
+                                        break;
+                                    case "奔驰":
+                                        imgDrawable = R.drawable.benz;
+                                        break;
+                                    case "宝马":
+                                        imgDrawable = R.drawable.bwm;
+                                        break;
+                                    case "比亚迪":
+                                        imgDrawable = R.drawable.byd;
+                                        break;
+                                    case "本田":
+                                        imgDrawable = R.drawable.honda;
+                                        break;
+                                    case "丰田":
+                                        imgDrawable = R.drawable.toyota;
+                                        break;
+                                    case "大众":
+                                        imgDrawable = R.drawable.www;
+                                        break;
+                                    default:
+                                        imgDrawable = R.drawable.default_img;
+                                        break;
+                                } // 找图片
+                                report.setImgDrawable(imgDrawable); // 图片
                                 report.setCarType(parts[0]); // 车型
 //                                String[] shortingArr = parts[1].split("&"); // 组织缺点
 //                                String shortingStr = "";
