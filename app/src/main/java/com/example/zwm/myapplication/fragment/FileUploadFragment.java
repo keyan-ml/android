@@ -44,6 +44,8 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
 
     private String fileContent;
     private String filePath;
+    private File dataFile;
+    private File resultFile;
 
     private boolean truePath;
 
@@ -75,18 +77,24 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
             if (requestCode == 1) {
                 Uri uri = data.getData();
                 filePath = getRealFilePath(getContext(), uri);
+                dataFile = new File(filePath);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (filePath.endsWith(".csv")) { // 选择了csv文件
-                            truePath = true;
-                            filePathView.setText(filePath.substring(19, filePath.length()));
+                        if (dataFile.exists()) {
+                            if (filePath.endsWith(".csv")) { // 选择了csv文件
+                                truePath = true;
+//                                filePathView.setText(filePath.substring(19, filePath.length()));
+                                filePathView.setText(dataFile.getName());
+                            }
+                            else { // 选择的不是csv文件
+                                filePathView.setText("请选择csv文件！");
+                                truePath = false;
+                            }
                         }
-                        else { // 选择的不是csv文件
-                            filePathView.setText("请选择csv文件！");
-                            truePath = false;
+                        else {
+                            errorInfoView.setText("找不到文件！");
                         }
-
                     }
                 });
                 Log.d("MyDebug",  "uri：" + uri + "\n路径：" + filePath);
@@ -140,7 +148,7 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
 
     private void fileUpload(final FragmentActivity activity) {
         try {
-            BufferedReader bufr = new BufferedReader( new FileReader(filePath) );
+            BufferedReader bufr = new BufferedReader( new FileReader(dataFile) );
             String str = "";
             fileContent = "";
             while ((str = bufr.readLine()) != null) {
@@ -203,8 +211,8 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
                                 dir.mkdirs();
                             }
                             Log.d("MyDebug", RESULE_FILE_PATH);
-
-                            BufferedWriter bufw = new BufferedWriter(new FileWriter(RESULE_FILE_PATH + "/result.txt"));
+                            resultFile = new File(RESULE_FILE_PATH + "/" + getFileNameNoSuffix(dataFile) + "_result.txt");
+                            BufferedWriter bufw = new BufferedWriter(new FileWriter(resultFile));
 
                             bufw.write("# 分类结果");
                             bufw.flush();
@@ -235,7 +243,7 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
                             activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    errorInfoView.setText("处理完成!\n结果保存至：" + RESULE_FILE_PATH + "/result.txt");
+                                    errorInfoView.setText("处理完成!\n结果保存至：" + resultFile.getAbsolutePath());
                                 }
                             });
                             Log.d("MyDebug", "分析完成，结果已保存。");
@@ -291,5 +299,10 @@ public class FileUploadFragment extends Fragment implements View.OnClickListener
             }
         }
         return data;
+    }
+
+    public String getFileNameNoSuffix(File file) {
+        String fileName = file.getName();
+        return fileName.substring(0, fileName.lastIndexOf("."));
     }
 }
